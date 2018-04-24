@@ -60,66 +60,55 @@ server.get('/', (req, res) => {
 });
 
 server.get('/filter', (req, res) => {
-  fs.readFile('client_secret.json', (err, content) => {
-    if (err) return console.log('Error loading client secret file:', err);
-    listMajors().then(rows => {
-      let headers = rows[0];
+  listMajors().then(rows => {
+    let headers = rows[0];
 
-      // Get a list of beer names
-      let beerNames = [],
-        companies = [];
+    // Get a list of beer names
+    let beerNames = [],
+      companies = [];
 
-      for (let row of rows) {
-        // No script tags here...
-        if (row[2] && !row[0].includes('<') && !row[0].includes('<')) {
-          beerNames.push(row[2]);
-          companies.push(row[0]);
-        }
+    for (let row of rows) {
+      // No script tags here...
+      if (row[2] && !row[0].includes('<') && !row[0].includes('<')) {
+        beerNames.push(row[2]);
+        companies.push(row[0]);
       }
+    }
 
-      // Let's create a set
-      let companiesSet = new Set(companies);
-      let companiesShortArray = Array.from(companiesSet);
+    // Let's create a set
+    let companiesSet = new Set(companies);
+    let companiesShortArray = Array.from(companiesSet);
 
-      let name = req.query.name;
-      if (!name) {
-        res.send({
-          beers: beerNames,
-          companies: companiesShortArray
-        });
-        return;
-      }
-
-      let chillFilteredBeers = [],
-        chillFilteredCompanies = [];
-      for (let beer of beerNames) {
-        if (beer.toLowerCase().includes(name.toLowerCase())) {
-          chillFilteredBeers.push(beer);
-        }
-      }
-      for (let company of companiesShortArray) {
-        if (company.toLowerCase().includes(name.toLowerCase())) {
-          chillFilteredCompanies.push(company);
-        }
-      }
+    let name = req.query.name;
+    if (!name) {
       res.send({
-        beers: chillFilteredBeers,
-        companies: chillFilteredCompanies
+        beers: beerNames,
+        companies: companiesShortArray
       });
-    }).catch(err => {
-      console.log('(/filter) Error', err);
+      return;
+    }
+
+    let chillFilteredBeers = [],
+      chillFilteredCompanies = [];
+    for (let beer of beerNames) {
+      if (beer.toLowerCase().includes(name.toLowerCase())) {
+        chillFilteredBeers.push(beer);
+      }
+    }
+    for (let company of companiesShortArray) {
+      if (company.toLowerCase().includes(name.toLowerCase())) {
+        chillFilteredCompanies.push(company);
+      }
+    }
+    res.send({
+      beers: chillFilteredBeers,
+      companies: chillFilteredCompanies
     });
+  }).catch(err => {
+    console.log('(/filter) Error', err);
   });
 });
 
 server.listen(process.env.PORT || 5555, () => {
   console.log('Which Beer now listening on port', process.env.PORT || 5555);
 });
-
-server.use(function (req, res, next) {
-  res.sendFile(path.join(__dirname, '../public', '404.html'));
-})
-
-server.use(function (err, req, res, next) {
-  res.sendFile(path.join(__dirname, '../public', '500.html'));
-})
