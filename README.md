@@ -1,4 +1,4 @@
-# WhereBeer
+# WhereBeerTasting
 Have we had this beer at beer tasting yet?
 
 This app is meant to be deployed either locally or on IBM's Bluemix Cloud
