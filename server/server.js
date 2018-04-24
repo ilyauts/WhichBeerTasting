@@ -22,6 +22,13 @@ server.use(bodyParser.urlencoded({ // to support URL-encoded bodies
 
 // Serve all from public
 server.use(express.static('public'));
+server.use((req, res, next) => {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "*");
+	res.header("Access-Control-Allow-Methods", "*");
+	next();
+})
+
 
 /**
  * Create an OAuth2 client with the given credentials
