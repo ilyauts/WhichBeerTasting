@@ -40,7 +40,7 @@ function listMajors() {
   return new Promise((good, bad) => {
     sheets.spreadsheets.values.get({
       spreadsheetId: '1oj1MBIlzoE5AhITjd0IDKyJQVr1uwN7IC0-9va5bNTs',
-      range: 'Beer List - By Tasting!A2:CO',
+      range: 'Beer List - By Tasting!A1:CO',
     }, (err, {
       data
     }) => {
@@ -67,11 +67,17 @@ server.get('/filter', (req, res) => {
     let beerNames = [],
       companies = [];
 
+    // Let's remove the first row
+    rows.splice(0,1);
+
+    // Now go through all the data
     for (let row of rows) {
       // No script tags here...
-      if (row[2] && !row[0].includes('<') && !row[0].includes('<')) {
-        beerNames.push(row[2]);
+      if(validText(row[0])) {
         companies.push(row[0]);
+      }
+      if(validText(row[2])) {
+        beerNames.push(row[2]);
       }
     }
 
@@ -108,6 +114,10 @@ server.get('/filter', (req, res) => {
     console.log('(/filter) Error', err);
   });
 });
+
+function validText(text) {
+  return (text && !text.includes('<'));
+}
 
 server.listen(process.env.PORT || 5555, () => {
   console.log('Which Beer now listening on port', process.env.PORT || 5555);
