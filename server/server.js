@@ -1,3 +1,6 @@
+require('appmetrics-dash').attach();
+require('appmetrics-prometheus').attach();
+
 const express = require('express'),
     server = express(),
     bodyParser = require('body-parser');
@@ -9,6 +12,8 @@ var {
 const OAuth2Client = google.auth.OAuth2;
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 const TOKEN_PATH = 'credentials.json';
+
+const path = require('path');
 
 server.use(bodyParser.json()); // to support JSON-encoded bodies
 server.use(bodyParser.urlencoded({ // to support URL-encoded bodies
@@ -83,7 +88,7 @@ function listMajors(auth) {
     return new Promise((good, bad) => {
         sheets.spreadsheets.values.get({
             spreadsheetId: '1oj1MBIlzoE5AhITjd0IDKyJQVr1uwN7IC0-9va5bNTs',
-            range: 'Beer List - By Tasting!A1:CO',
+            range: 'Beer List - By Tasting!A2:CO',
         }, (err, {
             data
         }) => {
@@ -160,3 +165,11 @@ server.get('/', (req, res) => {});
 server.listen(process.env.PORT || 5555, () => {
     console.log('Which Beer now listening on port', process.env.PORT || 5555);
 });
+
+server.use(function (req, res, next) {
+  res.sendFile(path.join(__dirname, '../public', '404.html'));
+})
+
+server.use(function (err, req, res, next) {
+  res.sendFile(path.join(__dirname, '../public', '500.html'));
+})
