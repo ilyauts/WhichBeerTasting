@@ -25,6 +25,8 @@ $(document).ready(function () {
         for (let company of data.companies) {
             $('#beer-companies').append('<p data-company="' + company + '">' + company + '</p>');
         }
+    }).catch(err => {
+        console.log('FE Error', err);
     });
 
 
