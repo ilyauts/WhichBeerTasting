@@ -160,8 +160,6 @@ server.get('/filter', (req, res) => {
     });
 });
 
-server.get('/', (req, res) => {});
-
 server.listen(process.env.PORT || 5555, () => {
     console.log('Which Beer now listening on port', process.env.PORT || 5555);
 });
