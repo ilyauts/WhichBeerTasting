@@ -70,7 +70,8 @@ server.get('/filter', (req, res) => {
         companies = [];
 
       for (let row of rows) {
-        if (row[2]) {
+        // No script tags here...
+        if (row[2] && !row[0].includes('<') && !row[0].includes('<')) {
           beerNames.push(row[2]);
           companies.push(row[0]);
         }
