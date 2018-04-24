@@ -1,0 +1,15 @@
+.row {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.no-padding {
+    padding: 0px !important;
+}
+
+body {
+    margin-left: 25px;
+    margin-right: 25px;
+    background-color: black;
+    color: gray;
+}
