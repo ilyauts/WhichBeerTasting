@@ -35,7 +35,7 @@ server.use((req, res, next) => {
 function listMajors() {
   const sheets = google.sheets({
     version: 'v4',
-    auth: 'AIzaSyCeDOH3eA99kHxZKoikw2Vg-pyBrpoAN1k'
+    auth: process.env.GOOGLE_TOKEN || '<YOUR GOOGLE TOKEN HERE>'
   });
   return new Promise((good, bad) => {
     sheets.spreadsheets.values.get({
