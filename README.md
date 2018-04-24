@@ -16,7 +16,7 @@ To run, enter the following commands:
 
 ## Bluemix Instructions
 Follow the instructions [here](https://github.com/ibm-watson-data-lab/--deprecated--simple-data-pipe/wiki/Create-a-user-defined-environment-variable-in-Bluemix) for setting your environment varible. 
-Make sure to call it **GOOGLE_TOKEN**.
+Make sure to call it **`GOOGLE_TOKEN`**.
 
 Then push the application to your Bluemix GIT repo and enjoy.
 
