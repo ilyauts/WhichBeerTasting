@@ -32,7 +32,7 @@ server.use((req, res, next) => {
 /**
  * Prints the names and majors of students in a sample spreadsheet:
  */
-function listMajors() {
+function listBeers() {
   const sheets = google.sheets({
     version: 'v4',
     auth: process.env.GOOGLE_TOKEN || '<YOUR GOOGLE TOKEN HERE>'
@@ -49,7 +49,7 @@ function listMajors() {
       return good(rows);
     });
   }).catch(err => {
-    console.log('(listMajors) Error', err);
+    console.log('(listBeers) Error', err);
   });
 }
 
@@ -60,7 +60,7 @@ server.get('/', (req, res) => {
 });
 
 server.get('/filter', (req, res) => {
-  listMajors().then(rows => {
+  listBeers().then(rows => {
     let headers = rows[0];
 
     // Get a list of beer names

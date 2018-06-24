@@ -1,3 +1,7 @@
+const removeDiacritics = require('diacritics').remove;
+    const $ = require('jquery');
+    const axios = require('axios');
+
 $(document).ready(function () {
 
     let data = {
@@ -43,7 +47,7 @@ $(document).ready(function () {
 
         for(let beer of beers) {
             let currBeerName = $(beer).data('beer').toString();
-            if(currBeerName && currBeerName.toLowerCase().includes(filter.toLowerCase())) {
+            if(currBeerName && removeDiacritics(currBeerName.toLowerCase()).includes(removeDiacritics(filter.toLowerCase()))) {
                 $(beer).show();
             } else {
                 $(beer).hide();
@@ -51,7 +55,7 @@ $(document).ready(function () {
         }
         for(let company of companies) {
             let currCompName = $(company).data('company').toString();
-            if(currCompName && currCompName.toLowerCase().includes(filter.toLowerCase())) {
+            if(currCompName && removeDiacritics(currCompName.toLowerCase()).includes(removeDiacritics(filter.toLowerCase()))) {
                 $(company).show();
             } else {
                 $(company).hide();
