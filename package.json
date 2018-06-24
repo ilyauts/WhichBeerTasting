@@ -21,17 +21,18 @@
     "appmetrics-dash": "^3.3.2",
     "appmetrics-prometheus": "^0.0.2",
     "appmetrics-zipkin": "^1.0.4",
-    "body-parser": "^1.18.2",
+    "body-parser": "^1.18.3",
     "express": "^4.15.3",
     "fs": "0.0.1-security",
-    "google-auth-library": "^1.4.0",
+    "google-auth-library": "^1.6.1",
     "googleapis": "^29.0.0",
-    "ibm-cloud-env": "^0",
+    "growl": "^1.10.5",
+    "ibm-cloud-env": "^0.2.0",
     "log4js": "^1.1.1",
     "opn": "^5.3.0",
     "readline": "^1.3.0",
     "require": "^2.4.20",
-    "uglify-js": "^3.3.22"
+    "uglify-js": "^3.4.1"
   },
   "devDependencies": {
     "chai": "^4.0.0",
