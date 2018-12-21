@@ -1,6 +1,3 @@
-require('appmetrics-dash').attach();
-require('appmetrics-prometheus').attach();
-
 const express = require('express'),
   server = express(),
   bodyParser = require('body-parser');
@@ -27,11 +24,12 @@ server.use((req, res, next) => {
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "*");
   next();
-})
+});
 
 /**
  * Prints the names and majors of students in a sample spreadsheet:
  */
+console.log('keeeey', process.env.GOOGLE_TOKEN);
 function listBeers() {
   const sheets = google.sheets({
     version: 'v4',
@@ -41,11 +39,11 @@ function listBeers() {
     sheets.spreadsheets.values.get({
       spreadsheetId: '1oj1MBIlzoE5AhITjd0IDKyJQVr1uwN7IC0-9va5bNTs',
       range: 'Beer List - By Tasting!A1:CO',
-    }, (err, {
-      data
-    }) => {
+    }, (err, dataContainer) => {
+
       if (err) return console.log('The API returned an error: ' + err);
-      const rows = data.values;
+
+      const rows = dataContainer.data.values;
       return good(rows);
     });
   }).catch(err => {
