@@ -8,8 +8,92 @@
 }
 
 body {
-    margin-left: 25px;
-    margin-right: 25px;
     background-color: black;
     color: gray;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0vh;
+    font-size: 0.75rem;
+    background-color: black;
+    width: 100%;
+    text-align: right;
+}
+
+.footer p {
+    margin-right: 4vw;
+    margin-bottom: 1vh;
+}
+
+.footer p a {
+    color: #b27609;
+}
+
+.footer p a:hover {
+    color: #eca21c;
+    text-decoration: none;
+}
+
+.left-pills {
+    margin-top: 20vh;
+}
+
+.nav-link.active {
+    background-color: #eca21c !important;
+    color: white;
+}
+
+.nav-link {
+    color: #eca21c;
+}
+
+.nav-link:hover {
+    color: white;
+}
+
+body, div, html, ul, p, li, a {
+    font-family: 'Verdana' !important;
+}
+
+.filter-beer, .filter-beer:focus {
+    background-color: black;
+    color: #eca21c;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid #b27609;
+    outline: none;
+}
+
+.filter-beer::placeholder {
+    color: #6b4a0e;
+}
+
+#attendee {
+    background-color: black;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid #b27609;
+    outline: none;
+    color: #b27609;
+}
+
+#beer-table {
+    background-color: black;
+    font-size: 1vw;
+}
+
+#beer-table thead {
+    color: #b27609;
+}
+
+#beer-table.table td {
+    border:none;
+    border-radius: 0;
+}
+
+#beer-table.table th {
+    border:none;
+    border-radius: 0;
+    border-bottom: 2px solid #b27609;
 }

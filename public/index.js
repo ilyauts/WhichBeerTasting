@@ -4,9 +4,11 @@ const axios = require('axios');
 
 $(document).ready(function () {
 
-    let data = {
+    const data = {
         companies: [],
-        beers: []
+        beers: [],
+        attendees: [],
+        total: []
     };
 
     // Load beers
@@ -18,17 +20,76 @@ $(document).ready(function () {
         $('#beer-companies').empty();
         $('#beer-names').empty();
 
-        data = response.data;
+        let respData = response.data;
 
-        // Push beers
-        for (let beer of data.beers) {
-            $('#beer-names').append('<p data-beer="' + beer + '">' + beer + '</p>');
+        // Start by determining the number of attendees
+        let initialIndex, finalIndex, companyIndex, beerIndex, avgIndex, finalRow;
+
+        // Get rid of all the blank entries
+        respData.total = respData.total.filter(currRow => (currRow[0] !== undefined && currRow[0] !== 'Count' && currRow[0] !=='AVG' && currRow[0] !== 'STDEV'));
+
+        for(let dIndex in respData.total[0]) {
+            if(respData.total[0][dIndex] === 'Company Name') {
+                companyIndex = parseInt(dIndex);
+            } else if(respData.total[0][dIndex] === 'Beer Name') {
+                beerIndex = parseInt(dIndex);
+            } else if(respData.total[0][dIndex] === 'Location') {
+                initialIndex = parseInt(dIndex) + 1;
+            } else if(respData.total[0][dIndex] === 'Avg. Rating') {
+                finalIndex = parseInt(dIndex);
+                avgIndex = parseInt(dIndex);
+                break;
+            }
         }
 
-        // Push companies
-        for (let company of data.companies) {
-            $('#beer-companies').append('<p data-company="' + company + '">' + company + '</p>');
+        // Cache
+        data.beers = respData.beers;
+        data.companies = respData.companies;
+        data.attendees = respData.total[0].map((person, pIndex) => {
+            if(pIndex >= initialIndex && pIndex < finalIndex) {
+                return { index: pIndex, name: person };
+            }
+        }).filter(person => person);
+
+        // Populate the dropdown
+        let options = data.attendees.map(datum => $('<option>', {
+            'data-index': datum.index,
+            text: datum.name
+        }));
+        $('#attendee').append(options);
+
+        // Listen to when person is selected
+        $('#attendee').change(e => {
+            populateForPerson.call(this, $(this).find(':selected').data('index'));
+        });
+
+
+        // Store entirety
+        data.total = respData.total;
+
+        // Generate table
+        let newTable = [];
+        for(let i = 1; i < data.total.length; ++i) {
+            newTable.push($('<tr>', {
+                'data-beer': removeDiacritics(data.total[i][beerIndex]).toLowerCase(),
+                'data-company': removeDiacritics(data.total[i][companyIndex]).toLowerCase(),
+                'data-index': i
+            }).append($('<td>', {
+                class: 'company',
+                text: data.total[i][companyIndex]
+            })).append($('<td>', {
+                class: 'beer',
+                text: data.total[i][beerIndex]
+            })).append($('<td>', {
+                class: 'avg-rating',
+                text: data.total[i][avgIndex]
+            })).append($('<td>', {
+                class: 'your-rating',
+                text: '...'
+            })))
         }
+
+        $('#beer-table tbody').append(newTable);
     }).catch(err => {
         console.log('FE Error', err);
     });
@@ -41,26 +102,22 @@ $(document).ready(function () {
     });
 
     function frontEndFilter(filter) {
-        // Loop through all the companies and the beers
-        let beers = $('#beer-names p');
-        let companies = $('#beer-companies p');
+        // Hide based on company and beer
+        $("tr").show();
+        if(filter === '' || filter === null || filter === undefined) {
+            // Do nothing
+        } else {
+            let formattedFilter = removeDiacritics(filter).toLowerCase();
+            $("tr:not([data-beer*='" + formattedFilter + "']):not(.header-tr)").hide();
+        }
+    }
 
-        for (let beer of beers) {
-            let currBeerName = $(beer).data('beer').toString();
-            if (currBeerName && removeDiacritics(currBeerName.toLowerCase()).includes(removeDiacritics(filter.toLowerCase()))) {
-                $(beer).show();
-            } else {
-                $(beer).hide();
-            }
-        }
-        for (let company of companies) {
-            let currCompName = $(company).data('company').toString();
-            if (currCompName && removeDiacritics(currCompName.toLowerCase()).includes(removeDiacritics(filter.toLowerCase()))) {
-                $(company).show();
-            } else {
-                $(company).hide();
-            }
-        }
+    function populateForPerson(index) {
+        let trs = $("tr:not(.header-tr)").each((_, el) => {
+            // console.log(data.total, idx, index);
+            let idx = $(el).data('index');
+            $(el).find('.your-rating').text(data.total[idx][index]);
+        });
     }
 
 });

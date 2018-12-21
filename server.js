@@ -2,7 +2,7 @@ const express = require('express'),
   server = express(),
   bodyParser = require('body-parser');
 
-  var {
+var {
   google
 } = require('googleapis');
 const OAuth2Client = google.auth.OAuth2;
@@ -25,6 +25,10 @@ server.use((req, res, next) => {
   next();
 });
 
+var cachedRows = [],
+  lastCache = null,
+  deltaTime = 1000 * 60 * 10;
+
 /**
  * Prints the names and majors of students in a sample spreadsheet:
  */
@@ -33,23 +37,31 @@ function listBeers() {
     version: 'v4',
     auth: process.env.GOOGLE_TOKEN || '<YOUR GOOGLE TOKEN HERE>'
   });
-  return new Promise((good, bad) => {
-    sheets.spreadsheets.values.get({
-      spreadsheetId: '1oj1MBIlzoE5AhITjd0IDKyJQVr1uwN7IC0-9va5bNTs',
-      range: 'Beer List - By Tasting!A1:CO',
-    }, (err, dataContainer) => {
 
-      if (err) return console.log('The API returned an error: ' + err);
+  if (!lastCache || lastCache + deltaTime <= timeNow()) {
+    return new Promise((good, bad) => {
+      sheets.spreadsheets.values.get({
+        spreadsheetId: '1oj1MBIlzoE5AhITjd0IDKyJQVr1uwN7IC0-9va5bNTs',
+        range: 'Beer List - By Tasting!A1:IL',
+      }, (err, dataContainer) => {
 
-      const rows = dataContainer.data.values;
-      return good(rows);
+        if (err) return console.log('The API returned an error: ' + err);
+
+        const rows = dataContainer.data.values;
+        cachedRows = rows;
+        lastCache = timeNow();
+
+        return good(rows);
+      });
+    }).catch(err => {
+      console.log('(listBeers) Error', err);
     });
-  }).catch(err => {
-    console.log('(listBeers) Error', err);
-  });
+  } else {
+    return new Promise(good => good(cachedRows));
+  }
 }
 
-server.get('/', (req, res) => {
+server.get('/ping', (req, res) => {
   res.send({
     'msg': `I'm Alive`
   })
@@ -63,17 +75,15 @@ server.get('/filter', (req, res) => {
     let beerNames = [],
       companies = [];
 
-    // Let's remove the first row
-    rows.splice(0,1);
-
     // Now go through all the data
-    for (let row of rows) {
+    for (let rowIndex = 1; rowIndex < rows.length; ++rowIndex) {
+
       // No script tags here...
-      if(validText(row[0])) {
-        companies.push(row[0]);
+      if (validText(rows[rowIndex][0])) {
+        companies.push(rows[rowIndex][0]);
       }
-      if(validText(row[2])) {
-        beerNames.push(row[2]);
+      if (validText(rows[rowIndex][2])) {
+        beerNames.push(rows[rowIndex][2]);
       }
     }
 
@@ -85,7 +95,8 @@ server.get('/filter', (req, res) => {
     if (!name) {
       res.send({
         beers: beerNames,
-        companies: companiesShortArray
+        companies: companiesShortArray,
+        total: rows
       });
       return;
     }
@@ -113,6 +124,10 @@ server.get('/filter', (req, res) => {
 
 function validText(text) {
   return (text && !text.includes('<'));
+}
+
+function timeNow() {
+  return (new Date).getTime();
 }
 
 server.listen(process.env.PORT || 5555, () => {
