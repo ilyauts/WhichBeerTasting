@@ -61,6 +61,7 @@ function listBeers() {
   }
 }
 
+
 server.get('/ping', (req, res) => {
   res.send({
     'msg': `I'm Alive`
