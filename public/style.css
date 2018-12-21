@@ -15,7 +15,7 @@ body {
 .footer {
     position: fixed;
     bottom: 0vh;
-    font-size: 0.75rem;
+    font-size: 1em;
     background-color: black;
     width: 100%;
     text-align: right;
