@@ -12303,7 +12303,11 @@ $(document).ready(function () {
     function populateForPerson(index) {
         let trs = $("tr:not(.header-tr)").each((_, el) => {
             let idx = $(el).data('index');
-            $(el).find('.your-rating').text(data.total[idx][index]);
+            if(data.total[idx][index] !== '...' && data.total[idx][index] !== undefined ) {
+                $(el).find('.your-rating').text(data.total[idx][index] * 10 + '%');
+            } else {
+                $(el).find('.your-rating').text('...');
+            }
         });
     }
 
