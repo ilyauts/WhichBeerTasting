@@ -15,7 +15,7 @@ body {
 .footer {
     position: fixed;
     bottom: 0vh;
-    font-size: 1em;
+    font-size: 0.75em;
     background-color: black;
     width: 100%;
     text-align: right;
@@ -78,22 +78,41 @@ body, div, html, ul, p, li, a {
     color: #b27609;
 }
 
-#beer-table {
+#beer-table, #leaderboard-table {
     background-color: black;
-    font-size: 1vw;
+    font-size: 2vh;
 }
 
-#beer-table thead {
+#beer-table thead, #leaderboard-table thead {
     color: #b27609;
 }
 
-#beer-table.table td {
+#beer-table.table td, #leaderboard-table.table td {
     border:none;
     border-radius: 0;
 }
 
-#beer-table.table th {
+#beer-table.table th, #leaderboard-table.table th {
     border:none;
     border-radius: 0;
     border-bottom: 2px solid #b27609;
+}
+
+.gold {
+    background-color: gold;
+    color: black;
+}
+
+.silver {
+    background-color: silver;
+    color: black;
+}
+
+.bronze {
+    background-color: #cd7f32;
+    color: black;
+}
+
+.all-star {
+    color: darkred;
 }

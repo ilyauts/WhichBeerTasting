@@ -12197,7 +12197,7 @@ $(document).ready(function () {
         // Store entirety
         data.total = respData.total;
 
-        // Generate table
+        // Generate beer table
         let newTable = [];
         for(let i = 1; i < data.total.length; ++i) {
             newTable.push($('<tr>', {
@@ -12216,10 +12216,68 @@ $(document).ready(function () {
             })).append($('<td>', {
                 class: 'your-rating',
                 text: '...'
-            })))
+            })));
+        }
+        $('#beer-table tbody').append(newTable);
+
+        // Generate leaderboard table
+        let leaderObj = {};
+        for(let i = 1; i < data.total.length; ++i) {
+            for(let j = initialIndex; j < finalIndex; ++j) {
+                if(data.total[i][j] !== '...') {
+                    console.log(data.total[0][j]);
+                    // Check if item already exists
+                    if(leaderObj[j]) {
+                        leaderObj[j].count++;
+                        leaderObj[j].sum += parseFloat(data.total[i][j]);
+                    } else {
+                        leaderObj[j] = {
+                            count: 1,
+                            sum: parseFloat(data.total[i][j]),
+                            name: data.total[0][j]
+                        }
+                    }
+                }
+            }
         }
 
-        $('#beer-table tbody').append(newTable);
+        // Find average
+        let newTableLeaderboard = [];
+        for(let key of Object.keys(leaderObj)) {
+            leaderObj[key].avg = leaderObj[key].sum / leaderObj[key].count;
+            newTableLeaderboard.push(leaderObj[key]);
+        }
+
+        // Sort
+        newTableLeaderboard.sort((a,b) => {
+            return b.count - a.count;
+        })
+
+        let jTableLeaderboard = [];
+        for(let i = 0; i < newTableLeaderboard.length; ++i) {
+            jTableLeaderboard.push($('<tr>', {
+                'data-index': i + 1
+            }).append($('<td>', {
+                class: 'rank' + leaderColor(i),
+                text: i + 1
+            })).append($('<td>', {
+                class: 'name' + leaderColor(i),
+                text: newTableLeaderboard[i].name
+            })).append($('<td>', {
+                class: 'num-beers' + leaderColor(i),
+                text: newTableLeaderboard[i].count
+            })).append($('<td>', {
+                class: 'avg-rating' + leaderColor(i),
+                text: cleverRound(newTableLeaderboard[i].avg)
+            })));
+
+            // Determine if all-star
+            if(newTableLeaderboard[i].count >= 150) {
+                jTableLeaderboard[jTableLeaderboard.length - 1].find('.name').html(newTableLeaderboard[i].name + ' <span class="all-star">&#9733;<span>')
+            }
+        }
+        $('#leaderboard-table tbody').append(jTableLeaderboard);
+
     }).catch(err => {
         console.log('FE Error', err);
     });
@@ -12249,6 +12307,22 @@ $(document).ready(function () {
             let idx = $(el).data('index');
             $(el).find('.your-rating').text(data.total[idx][index]);
         });
+    }
+
+    function cleverRound(num) {
+        return Math.floor(num * 100) / 100;
+    }
+
+    function leaderColor(i) {
+        if(i == 0) {
+            return ' gold';
+        } else if(i == 1) {
+            return ' silver';
+        } else if(i == 2) {
+            return ' bronze';
+        }
+
+        return '';
     }
 
 });
