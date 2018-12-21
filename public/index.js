@@ -109,6 +109,7 @@ $(document).ready(function () {
         } else {
             let formattedFilter = removeDiacritics(filter).toLowerCase();
             $("tr:not([data-beer*='" + formattedFilter + "']):not(.header-tr)").hide();
+            $("tr[data-company*='" + formattedFilter + "']:not(.header-tr)").show();
         }
     }
 
