@@ -1,9 +1,8 @@
 const express = require('express'),
   server = express(),
   bodyParser = require('body-parser');
-const fs = require('fs');
-const readline = require('readline');
-var {
+
+  var {
   google
 } = require('googleapis');
 const OAuth2Client = google.auth.OAuth2;
@@ -29,7 +28,6 @@ server.use((req, res, next) => {
 /**
  * Prints the names and majors of students in a sample spreadsheet:
  */
-console.log('keeeey', process.env.GOOGLE_TOKEN);
 function listBeers() {
   const sheets = google.sheets({
     version: 'v4',
