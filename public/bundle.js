@@ -12225,7 +12225,6 @@ $(document).ready(function () {
         for(let i = 1; i < data.total.length; ++i) {
             for(let j = initialIndex; j < finalIndex; ++j) {
                 if(data.total[i][j] !== '...') {
-                    console.log(data.total[0][j]);
                     // Check if item already exists
                     if(leaderObj[j]) {
                         leaderObj[j].count++;
@@ -12303,7 +12302,6 @@ $(document).ready(function () {
 
     function populateForPerson(index) {
         let trs = $("tr:not(.header-tr)").each((_, el) => {
-            // console.log(data.total, idx, index);
             let idx = $(el).data('index');
             $(el).find('.your-rating').text(data.total[idx][index]);
         });
