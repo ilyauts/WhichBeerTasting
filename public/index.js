@@ -96,7 +96,7 @@ $(document).ready(function () {
             for(let j = initialIndex; j < finalIndex; ++j) {
                 if(data.total[i][j] !== '...') {
                     // Check if item already exists
-                    if(leaderObj[j]) {
+                    if(leaderObj[j] && data.total[i][j].length) {
                         leaderObj[j].count++;
                         leaderObj[j].sum += parseFloat(data.total[i][j]);
                     } else {
