@@ -12201,6 +12201,7 @@ $(document).ready(function () {
         let newTable = [];
         for(let i = 1; i < data.total.length; ++i) {
             newTable.push($('<tr>', {
+                'class': 'beer-list-tr',
                 'data-beer': removeDiacritics(data.total[i][beerIndex]).toLowerCase(),
                 'data-company': removeDiacritics(data.total[i][companyIndex]).toLowerCase(),
                 'data-index': i
@@ -12226,7 +12227,7 @@ $(document).ready(function () {
             for(let j = initialIndex; j < finalIndex; ++j) {
                 if(data.total[i][j] !== '...') {
                     // Check if item already exists
-                    if(leaderObj[j]) {
+                    if(leaderObj[j] && data.total[i][j].length) {
                         leaderObj[j].count++;
                         leaderObj[j].sum += parseFloat(data.total[i][j]);
                     } else {
@@ -12290,13 +12291,13 @@ $(document).ready(function () {
 
     function frontEndFilter(filter) {
         // Hide based on company and beer
-        $("tr").show();
+        $("tr.beer-list-tr").show();
         if(filter === '' || filter === null || filter === undefined) {
             // Do nothing
         } else {
             let formattedFilter = removeDiacritics(filter).toLowerCase();
-            $("tr:not([data-beer*='" + formattedFilter + "']):not(.header-tr)").hide();
-            $("tr[data-company*='" + formattedFilter + "']:not(.header-tr)").show();
+            $("tr.beer-list-tr:not([data-beer*='" + formattedFilter + "']):not(.header-tr)").hide();
+            $("tr.beer-list-tr[data-company*='" + formattedFilter + "']:not(.header-tr)").show();
         }
     }
 
