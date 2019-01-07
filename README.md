@@ -13,4 +13,4 @@ To run, enter the following commands:
     npm start
 
 ## In the wild
-Use the version in production at [www.beertasting.life](http://beertasting.life).
+Use the version in production at [www.beertasting.life](http://beertasting.life)
