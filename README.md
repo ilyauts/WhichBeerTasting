@@ -1,4 +1,4 @@
-# WhereBeerTasting
+# WhichBeerTasting
 Have we had this beer at beer tasting yet?
 
 ## Google API Key
