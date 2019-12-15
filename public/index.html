@@ -24,8 +24,10 @@
           aria-controls="v-pills-general" aria-selected="true">General</a>
         <a class="nav-link" id="v-pills-leaderboard-tab" data-toggle="pill" href="#v-pills-leaderboard" role="tab"
           aria-controls="v-pills-leaderboard" aria-selected="false">Leaderboard</a>
-        <!-- <a class="nav-link" id="v-pills-analytics-tab" data-toggle="pill" href="#v-pills-analytics" role="tab"
-          aria-controls="v-pills-analytics" aria-selected="false">Analytics</a> -->
+        <a class="nav-link" id="v-pills-analytics-tab" data-toggle="pill" href="#v-pills-analytics" role="tab"
+          aria-controls="v-pills-analytics" aria-selected="false">Analytics</a>
+        <a class="nav-link" id="v-pills-suggestions-tab" data-toggle="pill" href="#v-pills-suggestions" role="tab"
+          aria-controls="v-pills-suggestions" aria-selected="false">Suggestions</a>
       </div>
     </div>
     <div class="col-sm-12 col-md-9">
@@ -58,7 +60,7 @@
 
           <div class="row">
             <div class="col">
-              <table class="table" id="beer-table">
+              <table class="table my-table" id="beer-table">
                 <thead>
                   <tr class="header-tr">
                     <th scope="col">Company</th>
@@ -76,7 +78,7 @@
         <div class="tab-pane fade" id="v-pills-leaderboard" role="tabpanel" aria-labelledby="v-pills-leaderboard-tab">
             <div class="row">
                 <div class="col">
-                  <table class="table mt-5" id="leaderboard-table">
+                  <table class="table mt-5 my-table" id="leaderboard-table">
                     <thead>
                       <tr class="header-tr">
                         <th scope="col">Rank</th>
@@ -91,8 +93,43 @@
                 </div>
               </div>
         </div>
-        <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel" aria-labelledby="v-pills-analytics-tab">Coming
-          Soon 2!</div>
+        <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel" aria-labelledby="v-pills-analytics-tab">
+          <h1 class="mt-5 mb-5">Analytics</h1>
+          <h4 class="mt-3">Who do you want to see analytics for?</h4>
+          <select id="analytics_select" class="custom-select mt-3">
+            <option selected>None</option>
+          </select>
+
+          <div id="analytics-post-select" class="hide-me">
+              <h4 class="mt-5">What are you interested in?</h4>
+              <div class="btn-group btn-group-lg analytics-buttons mt-3 mb-5" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-secondary analytics-button" data-selection="avg">Average Lists</button>
+                <button type="button" class="btn btn-secondary analytics-button" data-selection="top">Top Lists</button>
+                <button type="button" class="btn btn-secondary analytics-button" data-selection="year">Year In Review</button>
+              </div>
+    
+              <div class="analytics-sub-section hide-me" data-label="avg">
+                <table class="my-table table" id="average-table">
+                  <thead>
+                    <tr class="header-tr">
+                        <th scope="col">Type</th>
+                        <th scope="col">Average Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+              <div class="analytics-sub-section hide-me" data-label="top">top</div>
+              <div class="analytics-sub-section hide-me" data-label="year">year</div>
+          </div>
+          
+        </div>
+        <div class="tab-pane fade" id="v-pills-suggestions" role="tabpanel" aria-labelledby="v-pills-suggestions-tab">
+          <h1 class="mt-5 mb-5">Suggestions</h1>
+          <h4 class="mt-3">Have questions about the website or suggestions about how to improve the experience?</h4>
+          <h4 class="mt-5">Please email us at: <a class="link" href="mailto:beertasting@theeqns.com">beertasting@theeqns.com</a></h4>
+        </div>
       </div>
     </div>
   </div>

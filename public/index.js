@@ -2,14 +2,14 @@ const removeDiacritics = require('diacritics').remove;
 const $ = require('jquery');
 const axios = require('axios');
 
-$(document).ready(function () {
+const data = {
+    companies: [],
+    beers: [],
+    attendees: [],
+    total: []
+};
 
-    const data = {
-        companies: [],
-        beers: [],
-        attendees: [],
-        total: []
-    };
+$(document).ready(function () {
 
     // Load beers
     axios({
@@ -148,6 +148,13 @@ $(document).ready(function () {
         }
         $('#leaderboard-table tbody').append(jTableLeaderboard);
 
+        //! Analytics section
+        // Fill in names in analytics select
+        // Need to make a clone otherwise you get into some weird reference issues
+        const optionsCloned = options.map(option => option.clone());
+        $('#analytics_select').append(optionsCloned).on('change', populateAnalyticsForPerson);
+
+
     }).catch(err => {
         console.log('FE Error', err);
     });
@@ -157,6 +164,27 @@ $(document).ready(function () {
         if (this && $(this)) {
             frontEndFilter($(this).val());
         }
+    });
+
+    $('.analytics-button').on('click', function(e) {
+        const jTarget = $(e.target);
+
+        // If active one selected, do nothing
+        if(jTarget.hasClass('active')) {
+            return;
+        }
+
+        // Get rid of all warning classes on buttons
+        $('.btn-warning').removeClass('btn-warning active');
+
+        // Hide all sections
+        $('.analytics-sub-section').addClass('hide-me');
+
+        // Add the classes to this button
+        jTarget.addClass('btn-warning active');
+
+        // Show the current active section
+        $('.analytics-sub-section[data-label="' + jTarget.attr('data-selection') + '"]').removeClass('hide-me');
     });
 
     function frontEndFilter(filter) {
@@ -180,6 +208,97 @@ $(document).ready(function () {
                 $(el).find('.your-rating').text('...');
             }
         });
+    }
+
+    function populateAnalyticsForPerson(e) {
+        const jTarget = $(e.target);
+
+        // Find selected person
+        const selectedPerson = jTarget.find('option:selected').attr('data-index');
+
+        // Get rid of all warning classes on buttons
+        $('.btn-warning').removeClass('btn-warning active');
+
+        // Hide all sections
+        $('.analytics-sub-section').addClass('hide-me');
+
+        // Fill out the average table first
+        let avgTable = $('#average-table tbody');
+
+        // Clear out old content
+        avgTable.find('tr').remove();
+
+
+        // Find averages by all types
+        let personTypeMap = {
+            count: 0,
+            allTypes: 0
+        };
+
+        // Counting and math
+        for(let i = 0; i < data.total.length; ++i) {
+            // Have we gone too far?
+            if(data.total[i][0].indexOf('STDEV') !== -1) {
+                break;
+            }
+
+            let currScore = Number(data.total[i][selectedPerson]);
+            if(!isNaN(currScore)) {
+                if(typeof personTypeMap[data.total[i][1]] === 'undefined') {
+                    personTypeMap[data.total[i][1]] = 0;
+                    personTypeMap[data.total[i][1] + '-count'] = 0;
+                }
+
+                personTypeMap.count++;
+                personTypeMap.allTypes += currScore;
+                personTypeMap[data.total[i][1]] += currScore;
+                personTypeMap[data.total[i][1] + '-count']++;
+            }
+        }
+
+        // Static content first
+        avgTable.append($('<tr>', {
+        }).append($('<td>', {
+            text: 'All Beers'
+        })).append($('<td>', {
+            text: (personTypeMap['allTypes'] / personTypeMap['count']).toFixed(2)
+        })));
+
+        // Loop again to find the averages
+        let toPrint = [];
+        for(let p in personTypeMap) {
+            if(personTypeMap.hasOwnProperty(p)) {
+                if(p.indexOf('-count') === -1 && p.indexOf('allTypes') === -1 && p.indexOf('count') === -1) {
+                    // Find type averages
+                    personTypeMap[p] /= personTypeMap[p + '-count'];
+
+                    toPrint.push({
+                        name: p,
+                        score: personTypeMap[p]
+                    });                    
+                } else if(p === 'allTypes') {
+                    personTypeMap[p] /= personTypeMap['count'];
+                }
+            }
+        }
+
+        // Sort the toPrint array
+        toPrint.sort((a, b) => {
+            return (a.name > b.name) ? 1 : -1;
+        });
+
+        toPrint.forEach(el => {
+            // Add to table
+            avgTable.append($('<tr>', {
+            }).append($('<td>', {
+                text: el.name
+            })).append($('<td>', {
+                text: el.score.toFixed(2)
+            })));
+        });
+        
+        // Show the below section
+        $('#analytics-post-select').removeClass('hide-me');
     }
 
     function cleverRound(num) {

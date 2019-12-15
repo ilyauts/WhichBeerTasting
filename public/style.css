@@ -69,7 +69,7 @@ body, div, html, ul, p, li, a {
     color: #6b4a0e;
 }
 
-#attendee {
+.custom-select {
     background-color: black;
     border: none;
     border-radius: 0;
@@ -78,21 +78,21 @@ body, div, html, ul, p, li, a {
     color: #b27609;
 }
 
-#beer-table, #leaderboard-table {
+.my-table {
     background-color: black;
     font-size: 2vh;
 }
 
-#beer-table thead, #leaderboard-table thead {
+.my-table thead {
     color: #b27609;
 }
 
-#beer-table.table td, #leaderboard-table.table td {
+.my-table.table td {
     border:none;
     border-radius: 0;
 }
 
-#beer-table.table th, #leaderboard-table.table th {
+.my-table.table th {
     border:none;
     border-radius: 0;
     border-bottom: 2px solid #b27609;
@@ -115,4 +115,26 @@ body, div, html, ul, p, li, a {
 
 .all-star {
     color: darkred;
+}
+
+.hide-me {
+    display: none;
+}
+
+.analytics-buttons {
+
+}
+
+.btn-warning {
+    background-color: #eca21c !important;
+    color: white !important;
+}
+
+a.link {
+    color: #eca21c;
+    text-decoration: underline;
+}
+
+a.link:hover {
+    color: #6b4a0e;
 }
