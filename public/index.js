@@ -233,214 +233,219 @@ $(document).ready(function () {
     }
 
     function populateAnalyticsForPerson(e) {
-        const jTarget = $(e.target);
+        try {
+            const jTarget = $(e.target);
 
-        // Find selected person
-        const selectedPerson = jTarget.find('option:selected').attr('data-index');
-
-        // Get rid of all warning classes on buttons
-        $('.btn-warning').removeClass('btn-warning active');
-
-        // Hide all sections
-        $('.analytics-sub-section').addClass('hide-me');
-
-        // Fill out the average table first
-        let avgTable = $('#average-table tbody');
-
-        // Clear out old content
-        avgTable.find('tr').remove();
-
-
-        // Find averages by all types
-        let personTypeMap = {
-            count: 0,
-            allTypes: 0
-        };
-
-        let personAllBeers = [];
-        let person2019Beers = [];
-        let bucketedRatings = {'1': 0, '1.5': 0, '2': 0, '2.5': 0, '3': 0, '3.5': 0, '4': 0, '4.5': 0, '5': 0, '5.5': 0, '6': 0, '6.5': 0, '7': 0, '7.5': 0, '8': 0, '8.5': 0, '9': 0, '9.5': 0, '10': 0};
-        // Counting and math
-        for (let i = 0; i < data.total.length; ++i) {
-            // Have we gone too far?
-            if (data.total[i][0].indexOf('STDEV') !== -1) {
-                break;
-            }
-
-            let currScore = Number(data.total[i][selectedPerson]);
-            if (!isNaN(currScore)) {
-                if (typeof personTypeMap[data.total[i][1]] === 'undefined') {
-                    personTypeMap[data.total[i][1]] = 0;
-                    personTypeMap[data.total[i][1] + '-count'] = 0;
+            // Find selected person
+            const selectedPerson = jTarget.find('option:selected').attr('data-index');
+    
+            // Get rid of all warning classes on buttons
+            $('.btn-warning').removeClass('btn-warning active');
+    
+            // Hide all sections
+            $('.analytics-sub-section').addClass('hide-me');
+    
+            // Fill out the average table first
+            let avgTable = $('#average-table tbody');
+    
+            // Clear out old content
+            avgTable.find('tr').remove();
+    
+    
+            // Find averages by all types
+            let personTypeMap = {
+                count: 0,
+                allTypes: 0
+            };
+    
+            let personAllBeers = [];
+            let person2019Beers = [];
+            let bucketedRatings = {'1': 0, '1.5': 0, '2': 0, '2.5': 0, '3': 0, '3.5': 0, '4': 0, '4.5': 0, '5': 0, '5.5': 0, '6': 0, '6.5': 0, '7': 0, '7.5': 0, '8': 0, '8.5': 0, '9': 0, '9.5': 0, '10': 0};
+            // Counting and math
+            for (let i = 0; i < data.total.length; ++i) {
+                // Have we gone too far?
+                if (data.total[i][0].indexOf('STDEV') !== -1) {
+                    break;
                 }
-
-                personTypeMap.count++;
-                personTypeMap.allTypes += currScore;
-                personTypeMap[data.total[i][1]] += currScore;
-                personTypeMap[data.total[i][1] + '-count']++;
-
-                // Add to all beers list
-                personAllBeers.push({
-                    index: i,
-                    beerName: data.total[i][2],
-                    beerCompany: data.total[i][0],
-                    score: currScore
-
-                });
-
-                // Should we add it to 2019 year's analytics?
-                const starting2019Row = 343;
-                if (i >= starting2019Row) {
-                    person2019Beers.push({
+    
+                let currScore = Number(data.total[i][selectedPerson]);
+                if (!isNaN(currScore)) {
+                    if (typeof personTypeMap[data.total[i][1]] === 'undefined') {
+                        personTypeMap[data.total[i][1]] = 0;
+                        personTypeMap[data.total[i][1] + '-count'] = 0;
+                    }
+    
+                    personTypeMap.count++;
+                    personTypeMap.allTypes += currScore;
+                    personTypeMap[data.total[i][1]] += currScore;
+                    personTypeMap[data.total[i][1] + '-count']++;
+    
+                    // Add to all beers list
+                    personAllBeers.push({
                         index: i,
                         beerName: data.total[i][2],
                         beerCompany: data.total[i][0],
                         score: currScore
+    
                     });
-                }
-
-                // Add to buckets
-                bucketedRatings[currScore]++;
-            }
-        }
-
-        // Sort the analytics
-        personAllBeers.sort((a, b) => {
-            let toReturn = -1 * (a.score - b.score);
-
-            if (toReturn === 0) {
-                return ((a.beerName > b.beerName) ? 1 : -1);
-            } else {
-                return toReturn;
-            }
-        });
-        person2019Beers.sort((a, b) => {
-            let toReturn = -1 * (a.score - b.score);
-
-            if (toReturn === 0) {
-                return ((a.beerName > b.beerName) ? 1 : -1);
-            } else {
-                return toReturn;
-            }
-        });
-
-        // Populate top 10 beers
-        for (let i = 0; (i < personAllBeers.length && i < 10); ++i) {
-            $('#beer-table-all-top tbody').append($('<tr>')
-                .append($('<td>', { text: personAllBeers[i].beerCompany }))
-                .append($('<td>', { text: personAllBeers[i].beerName }))
-                .append($('<td>', { text: personAllBeers[i].score })));
-
-            $('#beer-table-all-bottom tbody').append($('<tr>')
-                .append($('<td>', { text: personAllBeers[personAllBeers.length - i - 1].beerCompany }))
-                .append($('<td>', { text: personAllBeers[personAllBeers.length - i - 1].beerName }))
-                .append($('<td>', { text: personAllBeers[personAllBeers.length - i - 1].score })));
-        }
-
-        // Populate top 10 beers for 2019
-        for (let i = 0; (i < person2019Beers.length && i < 10); ++i) {
-            $('#beer-table-2019-top tbody').append($('<tr>')
-                .append($('<td>', { text: person2019Beers[i].beerCompany }))
-                .append($('<td>', { text: person2019Beers[i].beerName }))
-                .append($('<td>', { text: person2019Beers[i].score })));
-
-            $('#beer-table-2019-bottom tbody').append($('<tr>')
-                .append($('<td>', { text: person2019Beers[person2019Beers.length - i - 1].beerCompany }))
-                .append($('<td>', { text: person2019Beers[person2019Beers.length - i - 1].beerName }))
-                .append($('<td>', { text: person2019Beers[person2019Beers.length - i - 1].score })));
-        }
-
-        // Static content first
-        avgTable.append($('<tr>', {
-        }).append($('<td>', {
-            text: 'All Beers'
-        })).append($('<td>', {
-            text: (personTypeMap['allTypes'] / personTypeMap['count']).toFixed(2)
-        })));
-
-        // Loop again to find the averages
-        let toPrint = [];
-        for (let p in personTypeMap) {
-            if (personTypeMap.hasOwnProperty(p)) {
-                if (p.indexOf('-count') === -1 && p.indexOf('allTypes') === -1 && p.indexOf('count') === -1) {
-                    // Find type averages
-                    personTypeMap[p] /= personTypeMap[p + '-count'];
-
-                    toPrint.push({
-                        name: p,
-                        score: personTypeMap[p]
-                    });
-                } else if (p === 'allTypes') {
-                    personTypeMap[p] /= personTypeMap['count'];
+    
+                    // Should we add it to 2019 year's analytics?
+                    const starting2019Row = 343;
+                    if (i >= starting2019Row) {
+                        person2019Beers.push({
+                            index: i,
+                            beerName: data.total[i][2],
+                            beerCompany: data.total[i][0],
+                            score: currScore
+                        });
+                    }
+    
+                    // Add to buckets
+                    bucketedRatings[currScore]++;
                 }
             }
-        }
-
-        // Sort the toPrint array
-        toPrint.sort((a, b) => {
-            return (a.name > b.name) ? 1 : -1;
-        });
-
-        toPrint.forEach(el => {
-            // Add to table
+    
+            // Sort the analytics
+            personAllBeers.sort((a, b) => {
+                let toReturn = -1 * (a.score - b.score);
+    
+                if (toReturn === 0) {
+                    return ((a.beerName > b.beerName) ? 1 : -1);
+                } else {
+                    return toReturn;
+                }
+            });
+            person2019Beers.sort((a, b) => {
+                let toReturn = -1 * (a.score - b.score);
+    
+                if (toReturn === 0) {
+                    return ((a.beerName > b.beerName) ? 1 : -1);
+                } else {
+                    return toReturn;
+                }
+            });
+    
+            // Populate top 10 beers
+            for (let i = 0; (i < personAllBeers.length && i < 10); ++i) {
+                $('#beer-table-all-top tbody').append($('<tr>')
+                    .append($('<td>', { text: personAllBeers[i].beerCompany }))
+                    .append($('<td>', { text: personAllBeers[i].beerName }))
+                    .append($('<td>', { text: personAllBeers[i].score })));
+    
+                $('#beer-table-all-bottom tbody').append($('<tr>')
+                    .append($('<td>', { text: personAllBeers[personAllBeers.length - i - 1].beerCompany }))
+                    .append($('<td>', { text: personAllBeers[personAllBeers.length - i - 1].beerName }))
+                    .append($('<td>', { text: personAllBeers[personAllBeers.length - i - 1].score })));
+            }
+    
+            // Populate top 10 beers for 2019
+            for (let i = 0; (i < person2019Beers.length && i < 10); ++i) {
+                $('#beer-table-2019-top tbody').append($('<tr>')
+                    .append($('<td>', { text: person2019Beers[i].beerCompany }))
+                    .append($('<td>', { text: person2019Beers[i].beerName }))
+                    .append($('<td>', { text: person2019Beers[i].score })));
+    
+                $('#beer-table-2019-bottom tbody').append($('<tr>')
+                    .append($('<td>', { text: person2019Beers[person2019Beers.length - i - 1].beerCompany }))
+                    .append($('<td>', { text: person2019Beers[person2019Beers.length - i - 1].beerName }))
+                    .append($('<td>', { text: person2019Beers[person2019Beers.length - i - 1].score })));
+            }
+    
+            // Static content first
             avgTable.append($('<tr>', {
             }).append($('<td>', {
-                text: el.name
+                text: 'All Beers'
             })).append($('<td>', {
-                text: el.score.toFixed(2)
+                text: (personTypeMap['allTypes'] / personTypeMap['count']).toFixed(2)
             })));
-        });
-
-        let labels = (Object.keys(bucketedRatings).map(a => Number(a))).sort((a,b) => a - b);
-
-        let bucketsArr = [];
-        labels.forEach(val => {
-            bucketsArr.push(bucketedRatings[val]);
-        });
-
-console.log(bucketsArr, bucketsArr)
-
-        // Create the chart
-        data.myChart = new Chart($('#rating-diagram')[0], {
-            type: 'bar',
-            data: {
-                labels,
-                datasets: [{
-                    data: bucketsArr,
-                    borderColor: '#6b4a0e',
-                    backgroundColor: '#6b4a0e',
-                    hoverBackgroundColor: '#eca21c'
-                }]
-            },
-            options: {
-                legend: {
-                    display: false
-                },
-                scales: {
-                    xAxes: [{
-                        gridLines: {
-                            offsetGridLines: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Rating'
-                        }
-                    }],
-                    yAxes: [{
-                        gridLines: {
-                            offsetGridLines: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Frequency'
-                        }
-                    }]
+    
+            // Loop again to find the averages
+            let toPrint = [];
+            for (let p in personTypeMap) {
+                if (personTypeMap.hasOwnProperty(p)) {
+                    if (p.indexOf('-count') === -1 && p.indexOf('allTypes') === -1 && p.indexOf('count') === -1) {
+                        // Find type averages
+                        personTypeMap[p] /= personTypeMap[p + '-count'];
+    
+                        toPrint.push({
+                            name: p,
+                            score: personTypeMap[p]
+                        });
+                    } else if (p === 'allTypes') {
+                        personTypeMap[p] /= personTypeMap['count'];
+                    }
                 }
             }
-        });
-
-        // Show the below section
-        $('#analytics-post-select').removeClass('hide-me');
+    
+            // Sort the toPrint array
+            toPrint.sort((a, b) => {
+                return (a.name > b.name) ? 1 : -1;
+            });
+    
+            toPrint.forEach(el => {
+                // Add to table
+                avgTable.append($('<tr>', {
+                }).append($('<td>', {
+                    text: el.name
+                })).append($('<td>', {
+                    text: el.score.toFixed(2)
+                })));
+            });
+    
+            let labels = (Object.keys(bucketedRatings).map(a => Number(a))).sort((a,b) => a - b);
+    
+            let bucketsArr = [];
+            labels.forEach(val => {
+                bucketsArr.push(bucketedRatings[val]);
+            });
+    
+    console.log(bucketsArr, bucketsArr)
+    
+            // Create the chart
+            data.myChart = new Chart($('#rating-diagram')[0], {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: bucketsArr,
+                        borderColor: '#6b4a0e',
+                        backgroundColor: '#6b4a0e',
+                        hoverBackgroundColor: '#eca21c'
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                offsetGridLines: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Rating'
+                            }
+                        }],
+                        yAxes: [{
+                            gridLines: {
+                                offsetGridLines: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Frequency'
+                            }
+                        }]
+                    }
+                }
+            });
+    
+            // Show the below section
+            $('#analytics-post-select').removeClass('hide-me');
+        } catch(e) {
+            console.log('Error!');
+            console.log(e);
+        }
     }
 
     function cleverRound(num) {
