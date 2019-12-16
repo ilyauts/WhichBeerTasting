@@ -33463,6 +33463,7 @@ $(document).ready(function () {
                             offsetGridLines: true
                         },
                         scaleLabel: {
+                            display: true,
                             labelString: 'Rating'
                         }
                     }],
@@ -33471,6 +33472,7 @@ $(document).ready(function () {
                             offsetGridLines: true
                         },
                         scaleLabel: {
+                            display: true,
                             labelString: 'Frequency'
                         }
                     }]
