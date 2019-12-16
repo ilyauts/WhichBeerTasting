@@ -398,6 +398,8 @@ $(document).ready(function () {
             bucketsArr.push(bucketedRatings[val]);
         });
 
+console.log(bucketsArr, bucketsArr)
+
         // Create the chart
         data.myChart = new Chart($('#rating-diagram')[0], {
             type: 'bar',
