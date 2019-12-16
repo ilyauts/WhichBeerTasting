@@ -7,9 +7,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/vendor/bootstrap.min.css">
+  <link type="text/css" rel="stylesheet" href="vendor/all.min.css">
   <link type="text/css" rel="stylesheet" href="style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="/vendor/bootstrap.min.js"></script>
+  <script src="/vendor/all.min.js"></script>
   <script src="bundle.js"></script>
 </head>
 
@@ -33,7 +35,8 @@
     <div class="col-sm-12 col-md-9">
       <!-- Content -->
       <div class="tab-content" id="v-pills-tabContent">
-        <div class="tab-pane fade active show" id="v-pills-general" role="tabpanel" aria-labelledby="v-pills-general-tab">
+        <div class="tab-pane fade active show" id="v-pills-general" role="tabpanel"
+          aria-labelledby="v-pills-general-tab">
 
           <div class="row mt-5">
             <div class="col">
@@ -45,8 +48,9 @@
             <div class="col-sm-12 col-md-6 mt-5">
               <div class="input-group">
                 <label class="w-100">Filter by beer or company...</label>
-                <input type="text" class="form-control filter-beer" id="query" placeholder="Search for beer" aria-label="Username"
-                  aria-describedby="basic-addon1">
+                <input type="text" class="form-control filter-beer" id="query" placeholder="Search for beer"
+                  aria-label="Username" aria-describedby="basic-addon1">
+                <i class="fas fa-search icon-right"></i>
               </div>
             </div>
 
@@ -76,22 +80,22 @@
           </div>
         </div>
         <div class="tab-pane fade" id="v-pills-leaderboard" role="tabpanel" aria-labelledby="v-pills-leaderboard-tab">
-            <div class="row">
-                <div class="col">
-                  <table class="table mt-5 my-table" id="leaderboard-table">
-                    <thead>
-                      <tr class="header-tr">
-                        <th scope="col">Rank</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Number of Beers</th>
-                        <th scope="col">Avg. Rating</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+          <div class="row">
+            <div class="col">
+              <table class="table mt-5 my-table" id="leaderboard-table">
+                <thead>
+                  <tr class="header-tr">
+                    <th scope="col">Rank</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Number of Beers</th>
+                    <th scope="col">Avg. Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
         <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel" aria-labelledby="v-pills-analytics-tab">
           <h1 class="mt-5 mb-5">Analytics</h1>
@@ -101,37 +105,103 @@
           </select>
 
           <div id="analytics-post-select" class="hide-me">
-              <h4 class="mt-5">What are you interested in?</h4>
-              <div class="btn-group btn-group-lg analytics-buttons mt-3 mb-5" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-secondary analytics-button" data-selection="avg">Average Lists</button>
-                <button type="button" class="btn btn-secondary analytics-button" data-selection="top">Top Lists</button>
-                <button type="button" class="btn btn-secondary analytics-button" data-selection="year">Year In Review</button>
+            <h4 class="mt-5">What are you interested in?</h4>
+            <div class="btn-group btn-group-lg analytics-buttons mt-3 mb-5" role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="avg">Average
+                Lists</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="top">Top Lists</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="year">Year In
+                Review</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="dist">Rating
+                Distribution</button>
+            </div>
+
+            <div class="analytics-sub-section hide-me" data-label="avg">
+              <div class="input-group mb-5">
+                <label class="w-100">Filter by beer or company...</label>
+                <input type="text" class="form-control filter-beer" id="avg-query" placeholder="Filter on type">
+                <i class="fas fa-search icon-right"></i>
               </div>
-    
-              <div class="analytics-sub-section hide-me" data-label="avg">
-                <table class="my-table table" id="average-table">
-                  <thead>
-                    <tr class="header-tr">
-                        <th scope="col">Type</th>
-                        <th scope="col">Average Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
-              </div>
-              <div class="analytics-sub-section hide-me" data-label="top">top</div>
-              <div class="analytics-sub-section hide-me" data-label="year">year</div>
+              <table class="my-table table" id="average-table">
+                <thead>
+                  <tr class="header-tr">
+                    <th scope="col">Type</th>
+                    <th scope="col">Average Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div class="analytics-sub-section hide-me" data-label="top">
+              <h3>Top Beers</h3>
+              <table class="table my-table" id="beer-table-all-top">
+                <thead>
+                  <tr class="header-tr">
+                    <th scope="col">Beer Company</th>
+                    <th scope="col">Beer Name</th>
+                    <th scope="col">Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+
+              <h3 class="mt-5">Bottom Beers</h3>
+              <table class="table my-table" id="beer-table-all-bottom">
+                <thead>
+                  <tr class="header-tr">
+                    <th scope="col">Beer Company</th>
+                    <th scope="col">Beer Name</th>
+                    <th scope="col">Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div class="analytics-sub-section hide-me" data-label="year">
+              <h3>Top Beers in 2019</h3>
+              <table class="table my-table" id="beer-table-2019-top">
+                <thead>
+                  <tr class="header-tr">
+                    <th scope="col">Beer Company</th>
+                    <th scope="col">Beer Name</th>
+                    <th scope="col">Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+
+              <h3 class="mt-5">Bottom Beers in 2019</h3>
+              <table class="table my-table" id="beer-table-2019-bottom">
+                <thead>
+                  <tr class="header-tr">
+                    <th scope="col">Beer Company</th>
+                    <th scope="col">Beer Name</th>
+                    <th scope="col">Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="analytics-sub-section hide-me" data-label="dist">
+              <canvas id="rating-diagram" width="4y00" height="200"></div>
           </div>
-          
         </div>
         <div class="tab-pane fade" id="v-pills-suggestions" role="tabpanel" aria-labelledby="v-pills-suggestions-tab">
           <h1 class="mt-5 mb-5">Suggestions</h1>
           <h4 class="mt-3">Have questions about the website or suggestions about how to improve the experience?</h4>
-          <h4 class="mt-5">Please email us at: <a class="link" href="mailto:beertasting@theeqns.com">beertasting@theeqns.com</a></h4>
+          <h4 class="mt-5">Please email us at: <a class="link"
+              href="mailto:beertasting@theeqns.com">beertasting@theeqns.com</a></h4>
         </div>
+
       </div>
     </div>
+  </div>
   </div>
 
   <div class="footer">
