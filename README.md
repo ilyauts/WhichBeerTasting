@@ -23,7 +23,7 @@ Start by Installing Browserify:
 Now compile the js files into a bundle:
 
     cd public
-    browserify 
+    browserify public/index.js -o .\public\bundle.js
 
 You should be all set!
 

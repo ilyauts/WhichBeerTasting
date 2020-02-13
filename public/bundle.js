@@ -33367,6 +33367,10 @@ $(document).ready(function () {
             }
         });
 
+        // Clear old data
+        $('#beer-table-all-top tbody tr').remove();
+        $('#beer-table-all-bottom tbody tr').remove();
+
         // Populate top 10 beers
         for (let i = 0; (i < personAllBeers.length && i < 10); ++i) {
             $('#beer-table-all-top tbody').append($('<tr>')
@@ -33379,6 +33383,10 @@ $(document).ready(function () {
                 .append($('<td>', { text: personAllBeers[personAllBeers.length - i - 1].beerName }))
                 .append($('<td>', { text: personAllBeers[personAllBeers.length - i - 1].score })));
         }
+
+        // Clear all old data
+        $('#beer-table-2019-top tbody tr').remove();
+        $('#beer-table-2019-bottom tbody tr').remove();
 
         // Populate top 10 beers for 2019
         for (let i = 0; (i < person2019Beers.length && i < 10); ++i) {
@@ -33399,6 +33407,8 @@ $(document).ready(function () {
             text: 'All Beers'
         })).append($('<td>', {
             text: (personTypeMap['allTypes'] / personTypeMap['count']).toFixed(2)
+        })).append($('<td>', {
+            text: personTypeMap['count']
         })));
 
         // Loop again to find the averages
@@ -33411,7 +33421,8 @@ $(document).ready(function () {
 
                     toPrint.push({
                         name: p,
-                        score: personTypeMap[p]
+                        score: personTypeMap[p],
+                        count: personTypeMap[p + '-count']
                     });
                 } else if (p === 'allTypes') {
                     personTypeMap[p] /= personTypeMap['count'];
@@ -33421,7 +33432,7 @@ $(document).ready(function () {
 
         // Sort the toPrint array
         toPrint.sort((a, b) => {
-            return (a.name > b.name) ? 1 : -1;
+            return (a.score > b.score) ? -1 : 1;
         });
 
         toPrint.forEach(el => {
@@ -33431,6 +33442,8 @@ $(document).ready(function () {
                 text: el.name
             })).append($('<td>', {
                 text: el.score.toFixed(2)
+            })).append($('<td>', {
+                text: el.count
             })));
         });
 
@@ -33440,6 +33453,17 @@ $(document).ready(function () {
         labels.forEach(val => {
             bucketsArr.push(bucketedRatings[val]);
         });
+
+        // Remove old chart
+        var jParent = $('#rating-diagram').parent();
+        $('#rating-diagram').remove();
+
+        // Take its place with the same element
+        jParent.append($('<canvas>', {
+            id: "rating-diagram",
+            width: "400",
+            height: "200"
+        }));
 
         // Create the chart
         data.myChart = new Chart($('#rating-diagram')[0], {

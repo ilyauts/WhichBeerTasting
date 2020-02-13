@@ -107,13 +107,10 @@
           <div id="analytics-post-select" class="hide-me">
             <h4 class="mt-5">What are you interested in?</h4>
             <div class="btn-group btn-group-lg analytics-buttons mt-3 mb-5" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-secondary analytics-button" data-selection="avg">Average
-                Lists</button>
-              <button type="button" class="btn btn-secondary analytics-button" data-selection="top">Top Lists</button>
-              <button type="button" class="btn btn-secondary analytics-button" data-selection="year">Year In
-                Review</button>
-              <button type="button" class="btn btn-secondary analytics-button" data-selection="dist">Rating
-                Distribution</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="avg">Beer Styles</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="top">Top / Bottom 10</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="year">Year In Review</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="dist">Rating Distribution</button>
             </div>
 
             <div class="analytics-sub-section hide-me" data-label="avg">
@@ -125,8 +122,9 @@
               <table class="my-table table" id="average-table">
                 <thead>
                   <tr class="header-tr">
-                    <th scope="col">Type</th>
+                    <th scope="col">Style</th>
                     <th scope="col">Average Rating</th>
+                    <th scope="col">Number Tasted</th>
                   </tr>
                 </thead>
                 <tbody>
