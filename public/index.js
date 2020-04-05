@@ -6,6 +6,8 @@ const Chart = require('chart.js');
 const data = {
     companies: [],
     beers: [],
+    locations: [],
+    countryCodes: [],
     attendees: [],
     total: [],
     myChart: {}
@@ -47,6 +49,8 @@ $(document).ready(function () {
         // Cache
         data.beers = respData.beers;
         data.companies = respData.companies;
+        data.locations = respData.locations;
+        data.countryCodes = respData.countryCodes;
         data.attendees = respData.total[0].map((person, pIndex) => {
             if (pIndex >= initialIndex && pIndex < finalIndex) {
                 return { index: pIndex, name: person };
@@ -156,6 +160,24 @@ $(document).ready(function () {
         const optionsCloned = options.map(option => option.clone());
         $('#analytics_select').append(optionsCloned).on('change', populateAnalyticsForPerson);
 
+        let countryBeerData = {};
+        
+        // Loop through all the countries and color them
+        for(let cc of data.countryCodes) {
+            countryBeerData[cc] = {
+                fillKey: 'beersTasted'
+            }
+        }
+
+        // Fill out the main map
+        var map = new Datamap({
+            element: document.getElementById('main-map'),
+            fills: {
+              defaultFill: "#d2b48c",
+              beersTasted: "#eca21c"
+            },
+            data: countryBeerData
+          });
 
     }).catch(err => {
         console.log('FE Error', err);

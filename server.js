@@ -1,6 +1,7 @@
 const express = require('express'),
   server = express(),
-  bodyParser = require('body-parser');
+  bodyParser = require('body-parser'),
+  countries = require("i18n-iso-countries");;
 
 var {
   google
@@ -74,7 +75,8 @@ server.get('/filter', (req, res) => {
 
     // Get a list of beer names
     let beerNames = [],
-      companies = [];
+      companies = [],
+      locations = [];
 
     // Now go through all the data
     for (let rowIndex = 1; rowIndex < rows.length; ++rowIndex) {
@@ -86,17 +88,46 @@ server.get('/filter', (req, res) => {
       if (validText(rows[rowIndex][2])) {
         beerNames.push(rows[rowIndex][2]);
       }
+      if (validText(rows[rowIndex][2])) {
+        locations.push(rows[rowIndex][3]);
+      }
     }
 
     // Let's create a set
     let companiesSet = new Set(companies);
     let companiesShortArray = Array.from(companiesSet);
 
+    // Get country codes
+    let countryCodes = ['USA'];
+    for(var d of locations) {
+        if(d.indexOf(',') !== -1) {
+            let currCountry = d.substring(d.indexOf(',') + 1).trim();
+
+            // Remove any states
+            if(currCountry.length <= 2) {
+              continue;
+            }
+
+            // Convert to code
+            currCountry = countries.getAlpha3Code(currCountry, 'en');
+
+            // Add if not null
+            if(currCountry !== null && typeof currCountry !== 'undefined') {
+              countryCodes.push(currCountry);
+            }
+        }
+    }
+
+    // Remove duplicates
+    countryCodes = [... new Set(countryCodes)];
+
     let name = req.query.name;
     if (!name) {
       res.send({
         beers: beerNames,
         companies: companiesShortArray,
+        countryCodes,
+        locations,
         total: rows
       });
       return;
