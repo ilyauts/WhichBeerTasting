@@ -33631,9 +33631,6 @@ $(document).ready(function () {
                     } else {
                         curr.count++;
                         curr.ratings += Number(data.total[currR + 1][personColumn]);
-                        if(l === 'SWE') {
-                            console.log('i tttttheeere', curr.count, curr.ratings)
-                            }
                     }
                 }
 
@@ -33645,11 +33642,6 @@ $(document).ready(function () {
                 }
             }
         }
-
-        // Loop and delete
-        // for(let k = 0; k < toDelete.length; ++k) {
-            // delete personalCountryCodes[toDelete[k]];
-        // }
 
         // Loop through all the countries and color them
         for(let cc in personalCountryCodes) {
