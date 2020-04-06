@@ -14,7 +14,9 @@
   <script src="/vendor/all.min.js"></script>
   <script src="/vendor/d3.min.js"></script>
   <script src="/vendor/topojson.min.js"></script>
-  <script src="/vendor/datamaps.world.min.js"></script>
+  <!-- <script src="/vendor/datamaps.world.min.js"></script> -->
+  <script src="/vendor/datamaps.all.min.js"></script>
+  <!-- <script src="/vendor/datamaps.usa.min.js"></script> -->
   <script src="bundle.js"></script>
 </head>
 
@@ -31,8 +33,10 @@
           aria-controls="v-pills-leaderboard" aria-selected="false">Leaderboard</a>
         <a class="nav-link" id="v-pills-analytics-tab" data-toggle="pill" href="#v-pills-analytics" role="tab"
           aria-controls="v-pills-analytics" aria-selected="false">Analytics</a>
+        <a class="nav-link" id="v-pills-maps-tab" data-toggle="pill" href="#v-pills-maps" role="tab"
+          aria-controls="v-pills-maps" aria-selected="false">Maps</a>
         <a class="nav-link" id="v-pills-suggestions-tab" data-toggle="pill" href="#v-pills-suggestions" role="tab"
-          aria-controls="v-pills-suggestions" aria-selected="false">Suggestions</a>
+          aria-controls="v-pills-suggestions" aria-selected="false">Contact Us</a>
       </div>
     </div>
     <div class="col-sm-12 col-md-9">
@@ -45,10 +49,6 @@
             <div class="col">
               <h1>Beers Tasted:</h1>
             </div>
-          </div>
-
-          <div class="row mt-5">
-              <div id="main-map" style="position: relative; width: 60vw; height: 25vw;"></div>
           </div>
 
           <div class="row mb-5">
@@ -114,12 +114,22 @@
           <div id="analytics-post-select" class="hide-me">
             <h4 class="mt-5">What are you interested in?</h4>
             <div class="btn-group btn-group-lg analytics-buttons mt-3 mb-5" role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="maps">Maps</button>
               <button type="button" class="btn btn-secondary analytics-button" data-selection="avg">Beer Styles</button>
               <button type="button" class="btn btn-secondary analytics-button" data-selection="top">Top / Bottom 10</button>
               <button type="button" class="btn btn-secondary analytics-button" data-selection="year">Year In Review</button>
               <button type="button" class="btn btn-secondary analytics-button" data-selection="dist">Rating Distribution</button>
             </div>
 
+            <div class="analytics-sub-section hide-me" data-label="maps">
+              <div class="input-group mb-5">
+                <label class="w-100 map-header">Beers Tasted Worldwide</label>
+                <div id="main-map-personal" style="position: relative; width: 60vw; height: 30vw;"></div>
+
+                <label class="w-100 map-header">Beers Tasted in the US</h2>
+                <div id="usa-map-personal" style="position: relative; width: 60vw; height: 35vw;"></div>
+              </div>
+            </div>
             <div class="analytics-sub-section hide-me" data-label="avg">
               <div class="input-group mb-5">
                 <label class="w-100">Filter by beer or company...</label>
@@ -195,6 +205,19 @@
 
             <div class="analytics-sub-section hide-me" data-label="dist">
               <canvas id="rating-diagram" width="400" height="200"></div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="v-pills-maps" role="tabpanel" aria-labelledby="v-pills-maps-tab">
+          <div class="row">
+            <div class="col">
+              <div class="row mt-5">
+                <h2 class="map-header">Beers Tasted Worldwide</h2>
+                <div id="main-map" style="position: relative; width: 60vw; height: 30vw;"></div>
+
+                <h2 class="map-header">Beers Tasted in the US</h2>
+                <div id="usa-map" style="position: relative; width: 60vw; height: 35vw;"></div>
+            </div>
+            </div>
           </div>
         </div>
         <div class="tab-pane fade" id="v-pills-suggestions" role="tabpanel" aria-labelledby="v-pills-suggestions-tab">

@@ -77,7 +77,7 @@ server.get('/filter', (req, res) => {
     let beerNames = [],
       companies = [],
       locations = [];
-
+    
     // Now go through all the data
     for (let rowIndex = 1; rowIndex < rows.length; ++rowIndex) {
 
@@ -91,42 +91,100 @@ server.get('/filter', (req, res) => {
       if (validText(rows[rowIndex][2])) {
         locations.push(rows[rowIndex][3]);
       }
+    }  
+    
+    // Average ratings column
+    let avgRtgs = -1;
+    for(let i = 0; i < rows[0].length; ++i) {
+      if(rows[0][i] === 'Avg. Rating') {
+        avgRtgs = i;
+        break;
+      }
     }
 
     // Let's create a set
     let companiesSet = new Set(companies);
     let companiesShortArray = Array.from(companiesSet);
 
-    // Get country codes
-    let countryCodes = ['USA'];
-    for(var d of locations) {
+    // Get country codes and state codes
+    let countryCodes = {
+      USA: {
+        count: 0,
+        ratings: 0,
+        rows: []
+      }
+    };
+    let stateCodes = {};
+    for(var idx = 1; idx < locations.length; ++idx) {
+        let d = locations[idx];
+
         if(d.indexOf(',') !== -1) {
-            let currCountry = d.substring(d.indexOf(',') + 1).trim();
+            let currLocation = d.substring(d.indexOf(',') + 1).trim();
 
             // Remove any states
-            if(currCountry.length <= 2) {
+            if(currLocation <= 1) {
               continue;
-            }
+            } else if(currLocation.length === 2) {
+              if(typeof stateCodes[currLocation] !== 'undefined') {
+                stateCodes[currLocation].count++;
+                stateCodes[currLocation].ratings += stripPercent(rows[idx][avgRtgs]);
+                stateCodes[currLocation].rows.push(idx);
+              } else {
+                stateCodes[currLocation] = {
+                  state: currLocation,
+                  count: 1,
+                  ratings: stripPercent(rows[idx][avgRtgs]),
+                  rows: [idx]
+                };
+              }
 
-            // Convert to code
-            currCountry = countries.getAlpha3Code(currCountry, 'en');
+              // Add for the country too
+              countryCodes['USA'].count++;
+              countryCodes['USA'].ratings += stripPercent(rows[idx][avgRtgs]);
+              countryCodes['USA'].rows.push(idx);
+            } else {
+              // Convert to code
+              currLocation = countries.getAlpha3Code(currLocation, 'en');
 
-            // Add if not null
-            if(currCountry !== null && typeof currCountry !== 'undefined') {
-              countryCodes.push(currCountry);
+              // Add if not null
+              if(currLocation !== null && typeof currLocation !== 'undefined') {
+                if(typeof countryCodes[currLocation] !== 'undefined') {
+                  countryCodes[currLocation].count++;
+                  countryCodes[currLocation].ratings += stripPercent(rows[idx][avgRtgs]);
+                  countryCodes[currLocation].rows.push(idx);
+                } else {
+                  countryCodes[currLocation] = {
+                    country: currLocation,
+                    count: 1,
+                    ratings: stripPercent(rows[idx][avgRtgs]),
+                    rows: [idx]
+                  };
+                }
+              }
             }
         }
     }
 
-    // Remove duplicates
-    countryCodes = [... new Set(countryCodes)];
+    // Avg the ratings
+    for(let s in stateCodes) {
+      if(stateCodes.hasOwnProperty(s)) {
+        stateCodes[s].ratings /= stateCodes[s].count;
+      }
+    }
 
+    for(let s in countryCodes) {
+      if(countryCodes.hasOwnProperty(s)) {
+        countryCodes[s].ratings /= countryCodes[s].count;
+      }
+    }
+    
     let name = req.query.name;
     if (!name) {
       res.send({
         beers: beerNames,
         companies: companiesShortArray,
         countryCodes,
+        stateCodes,
         locations,
         total: rows
       });
@@ -160,6 +218,14 @@ function validText(text) {
 
 function timeNow() {
   return (new Date).getTime();
+}
+
+function stripPercent(num) {
+  if(num[num.length - 1] === '%') {
+    return Number(num.substring(0, num.length - 1));
+  } else {
+    return Number(num);
+  }
 }
 
 server.listen(process.env.PORT || 5555, () => {

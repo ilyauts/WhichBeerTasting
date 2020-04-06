@@ -154,3 +154,12 @@ a.link:hover {
 .row-padding-20 {
     padding-bottom: 20px;
 }
+
+.map-header {
+    margin-top: 120px;
+    margin-bottom: 50px;
+}
+
+.map-header:first-of-type {
+    margin-top: 0px;
+}

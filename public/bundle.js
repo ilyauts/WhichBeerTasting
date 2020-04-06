@@ -33051,10 +33051,14 @@ const data = {
     beers: [],
     locations: [],
     countryCodes: [],
+    stateCodes: [],
     attendees: [],
     total: [],
     myChart: {}
 };
+
+// Store in the window for later
+window.data = data;
 
 $(document).ready(function () {
 
@@ -33094,6 +33098,7 @@ $(document).ready(function () {
         data.companies = respData.companies;
         data.locations = respData.locations;
         data.countryCodes = respData.countryCodes;
+        data.stateCodes = respData.stateCodes;
         data.attendees = respData.total[0].map((person, pIndex) => {
             if (pIndex >= initialIndex && pIndex < finalIndex) {
                 return { index: pIndex, name: person };
@@ -33197,31 +33202,14 @@ $(document).ready(function () {
         }
         $('#leaderboard-table tbody').append(jTableLeaderboard);
 
+        // Populate the maps
+        populateMaps();
+
         //! Analytics section
         // Fill in names in analytics select
         // Need to make a clone otherwise you get into some weird reference issues
         const optionsCloned = options.map(option => option.clone());
         $('#analytics_select').append(optionsCloned).on('change', populateAnalyticsForPerson);
-
-        let countryBeerData = {};
-        
-        // Loop through all the countries and color them
-        for(let cc of data.countryCodes) {
-            countryBeerData[cc] = {
-                fillKey: 'beersTasted'
-            }
-        }
-
-        // Fill out the main map
-        var map = new Datamap({
-            element: document.getElementById('main-map'),
-            fills: {
-              defaultFill: "#d2b48c",
-              beersTasted: "#eca21c"
-            },
-            data: countryBeerData
-          });
-
     }).catch(err => {
         console.log('FE Error', err);
     });
@@ -33252,6 +33240,13 @@ $(document).ready(function () {
 
         // Show the current active section
         $('.analytics-sub-section[data-label="' + jTarget.attr('data-selection') + '"]').removeClass('hide-me');
+    });
+
+    $('#v-pills-maps-tab').on('click', function(e) {
+        // Let's render the maps
+        setTimeout(function() {
+            populateMaps(); 
+        }, 250);
     });
 
     $('#avg-query').on('input', function (e) {
@@ -33546,6 +33541,198 @@ $(document).ready(function () {
         return '';
     }
 
+    function populateMaps() {
+        let countryBeerData = {};
+        let stateBeerData = {};
+        
+        // Loop through all the countries and color them
+        for(let cc in data.countryCodes) {
+            if(data.countryCodes.hasOwnProperty(cc)) {
+                let curr = data.countryCodes[cc];
+                countryBeerData[cc] = {
+                    fillKey: 'beersTasted',
+                    ratings: curr.ratings,
+                    count: curr.count
+                }
+            }
+        }
+
+        // Fill out the main map
+        $('#main-map').html('');
+        var map = new Datamap({
+            element: document.getElementById('main-map'),
+            fills: {
+              defaultFill: "#d2b48c",
+              beersTasted: "#eca21c"
+            },
+            geographyConfig: {
+                highlightBorderColor: '#bada55',
+                popupTemplate: function(geography, data) {
+                    return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></br>Avg Rating: ' + Math.round(data.ratings) + '%</br>Count: ' + data.count + '</div>'
+                }                
+              },
+            data: countryBeerData
+          });
+
+        // Loop through all the states and do the same
+        for(let cc in data.stateCodes) {
+            if(data.stateCodes.hasOwnProperty(cc)) {
+                let curr = data.stateCodes[cc];
+                stateBeerData[cc] = {
+                    fillKey: 'beersTasted',
+                    ratings: curr.ratings,
+                    count: curr.count
+                }
+            }
+        }
+        
+        // Fill out the main map
+        $('#usa-map').html('');
+        var usaMap = new Datamap({
+            scope: 'usa',
+            element: document.getElementById('usa-map'),
+            fills: {
+              defaultFill: "#d2b48c",
+              beersTasted: "#eca21c"
+            },
+            geographyConfig: {
+                highlightBorderColor: '#bada55',
+                popupTemplate: function(geography, data) {
+                    return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></br>Avg Rating: ' + Math.round(data.ratings) + '%</br>Count: ' + data.count + '</div>'
+                }                
+              },
+            data: stateBeerData
+          });
+    }
+
+    // Maps for individuals instead
+    $('body').on('click', '[data-selection="maps"]', function(e) {
+        let countryBeerData = {};
+        let stateBeerData = {};
+
+        let personColumn = $('#analytics_select option:selected').attr('data-index');
+
+        // First make a copy of the global count, and instead filter it down to the personal count
+        let personalCountryCodes = JSON.parse(JSON.stringify(data.countryCodes));
+        for(let l in personalCountryCodes) {
+            if(personalCountryCodes.hasOwnProperty(l)) {
+                let curr = personalCountryCodes[l];
+
+                // Clear count and avg ratings
+                curr.count = 0;
+                curr.ratings = 0;
+
+                // Loop through all rows, and remove any that don't belong there
+                for(let r = curr.rows.length - 1; r >= 0; r--) {
+                    let currR = curr.rows[r];
+                    if(data.total[currR][personColumn] === '...' || data.total[currR][personColumn] === '') {
+                        curr.rows.splice(r, 1);
+                    } else {
+                        curr.count++;
+                        curr.ratings += Number(data.total[currR][personColumn]);
+                    }
+                }
+
+                // If count still zero - delete key
+                 if(curr.count === 0) {
+                    delete personalCountryCodes[l];
+                } else {
+                    console.log(curr.ratings, curr.count)
+                    curr.ratings = (curr.ratings * 10) / curr.count;
+                    console.log('ratttnijng', curr.ratings)
+                }
+            }
+        }
+        
+        // Loop through all the countries and color them
+        for(let cc in personalCountryCodes) {
+            if(personalCountryCodes.hasOwnProperty(cc)) {
+                let curr = personalCountryCodes[cc];
+                countryBeerData[cc] = {
+                    fillKey: 'beersTasted',
+                    ratings: curr.ratings,
+                    count: curr.count
+                }
+            }
+        }
+
+        $('#main-map-personal').html('');
+        var map = new Datamap({
+            element: document.getElementById('main-map-personal'),
+            fills: {
+              defaultFill: "#d2b48c",
+              beersTasted: "#eca21c"
+            },
+            geographyConfig: {
+                highlightBorderColor: '#bada55',
+                popupTemplate: function(geography, data) {
+                    return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></br>Avg Rating: ' + Math.round(data.ratings) + '%</br>Count: ' + data.count + '</div>'
+                }                
+              },
+            data: countryBeerData
+          });
+
+
+        // First make a copy of the global count, and instead filter it down to the personal count
+        let personalStateCodes = JSON.parse(JSON.stringify(data.stateCodes));
+        for(let l in personalStateCodes) {
+            if(personalStateCodes.hasOwnProperty(l)) {
+                let curr = personalStateCodes[l];
+
+                // Clear count and avg ratings
+                curr.count = 0;
+                curr.ratings = 0;
+
+                // Loop through all rows, and remove any that don't belong there
+                for(let r = curr.rows.length - 1; r >= 0; r--) {
+                    let currR = curr.rows[r];
+                    if(data.total[currR][personColumn] === '...' || data.total[currR][personColumn] === '') {
+                        curr.rows.splice(r, 1);
+                    } else {
+                        curr.count++;
+                        curr.ratings += Number(data.total[currR][personColumn]);
+                    }
+                }
+
+                // If count still zero - delete key
+                if(curr.count === 0) {
+                    delete personalStateCodes[l];
+                } else {
+                    curr.ratings = (curr.ratings * 10) / curr.count;
+                }
+            }
+        }
+
+        // Loop through all the states and do the same
+        for(let cc in personalStateCodes) {
+            if(personalStateCodes.hasOwnProperty(cc)) {
+                let curr = personalStateCodes[cc];
+                stateBeerData[cc] = {
+                    fillKey: 'beersTasted',
+                    ratings: curr.ratings,
+                    count: curr.count
+                }
+            }
+        }
+        
+        // Fill out the main map
+        $('#usa-map-personal').html('');
+        var usaMap = new Datamap({
+            scope: 'usa',
+            element: document.getElementById('usa-map-personal'),
+            fills: {
+              defaultFill: "#d2b48c",
+              beersTasted: "#eca21c"
+            },
+            geographyConfig: {
+                highlightBorderColor: '#bada55',
+                popupTemplate: function(geography, data) {
+                    return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></br>Avg Rating: ' + Math.round(data.ratings) + '%</br>Count: ' + data.count + '</div>'
+                }                
+              },
+            data: stateBeerData
+          });
+    });
 });
 },{"axios":1,"chart.js":25,"diacritics":26,"jquery":28}],31:[function(require,module,exports){
 // shim for using process in browser
