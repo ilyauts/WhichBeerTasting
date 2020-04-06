@@ -33613,6 +33613,7 @@ $(document).ready(function () {
         let personColumn = $('#analytics_select option:selected').attr('data-index');
 
         // First make a copy of the global count, and instead filter it down to the personal count
+        let toDelete = [];
         let personalCountryCodes = JSON.parse(JSON.stringify(data.countryCodes));
         for(let l in personalCountryCodes) {
             if(personalCountryCodes.hasOwnProperty(l)) {
@@ -33625,11 +33626,14 @@ $(document).ready(function () {
                 // Loop through all rows, and remove any that don't belong there
                 for(let r = curr.rows.length - 1; r >= 0; r--) {
                     let currR = curr.rows[r];
-                    if(data.total[currR][personColumn] === '...' || data.total[currR][personColumn] === '') {
+                    if(data.total[currR + 1][personColumn] === '...' || data.total[currR + 1][personColumn] === '') {
                         curr.rows.splice(r, 1);
                     } else {
                         curr.count++;
-                        curr.ratings += Number(data.total[currR][personColumn]);
+                        curr.ratings += Number(data.total[currR + 1][personColumn]);
+                        if(l === 'SWE') {
+                            console.log('i tttttheeere', curr.count, curr.ratings)
+                            }
                     }
                 }
 
@@ -33637,13 +33641,16 @@ $(document).ready(function () {
                  if(curr.count === 0) {
                     delete personalCountryCodes[l];
                 } else {
-                    console.log(curr.ratings, curr.count)
                     curr.ratings = (curr.ratings * 10) / curr.count;
-                    console.log('ratttnijng', curr.ratings)
                 }
             }
         }
-        
+
+        // Loop and delete
+        // for(let k = 0; k < toDelete.length; ++k) {
+            // delete personalCountryCodes[toDelete[k]];
+        // }
+
         // Loop through all the countries and color them
         for(let cc in personalCountryCodes) {
             if(personalCountryCodes.hasOwnProperty(cc)) {
@@ -33686,11 +33693,11 @@ $(document).ready(function () {
                 // Loop through all rows, and remove any that don't belong there
                 for(let r = curr.rows.length - 1; r >= 0; r--) {
                     let currR = curr.rows[r];
-                    if(data.total[currR][personColumn] === '...' || data.total[currR][personColumn] === '') {
+                    if(data.total[currR + 1][personColumn] === '...' || data.total[currR + 1][personColumn] === '') {
                         curr.rows.splice(r, 1);
                     } else {
                         curr.count++;
-                        curr.ratings += Number(data.total[currR][personColumn]);
+                        curr.ratings += Number(data.total[currR + 1][personColumn]);
                     }
                 }
 

@@ -115,7 +115,7 @@ server.get('/filter', (req, res) => {
       }
     };
     let stateCodes = {};
-    for(var idx = 1; idx < locations.length; ++idx) {
+    for(var idx = 0; idx < locations.length; ++idx) {
         let d = locations[idx];
 
         if(d.indexOf(',') !== -1) {
@@ -127,13 +127,13 @@ server.get('/filter', (req, res) => {
             } else if(currLocation.length === 2) {
               if(typeof stateCodes[currLocation] !== 'undefined') {
                 stateCodes[currLocation].count++;
-                stateCodes[currLocation].ratings += stripPercent(rows[idx][avgRtgs]);
+                stateCodes[currLocation].ratings += stripPercent(rows[idx + 1][avgRtgs]);
                 stateCodes[currLocation].rows.push(idx);
               } else {
                 stateCodes[currLocation] = {
                   state: currLocation,
                   count: 1,
-                  ratings: stripPercent(rows[idx][avgRtgs]),
+                  ratings: stripPercent(rows[idx + 1][avgRtgs]),
                   rows: [idx]
                 };
               }
@@ -150,13 +150,13 @@ server.get('/filter', (req, res) => {
               if(currLocation !== null && typeof currLocation !== 'undefined') {
                 if(typeof countryCodes[currLocation] !== 'undefined') {
                   countryCodes[currLocation].count++;
-                  countryCodes[currLocation].ratings += stripPercent(rows[idx][avgRtgs]);
+                  countryCodes[currLocation].ratings += stripPercent(rows[idx + 1][avgRtgs]);
                   countryCodes[currLocation].rows.push(idx);
                 } else {
                   countryCodes[currLocation] = {
                     country: currLocation,
                     count: 1,
-                    ratings: stripPercent(rows[idx][avgRtgs]),
+                    ratings: stripPercent(rows[idx + 1][avgRtgs]),
                     rows: [idx]
                   };
                 }
