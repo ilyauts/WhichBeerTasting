@@ -33149,7 +33149,11 @@ $(document).ready(function () {
         let leaderObj = {};
         for (let i = 1; i < data.total.length; ++i) {
             for (let j = initialIndex; j < finalIndex; ++j) {
-                if (data.total[i][j] !== '...') {
+                if(j == 12) {
+                    console.log(data.total[i][j], parseFloat(data.total[i][j]), data.total[0][j], data.total[i][j] === '...')
+                }
+                if (!isNaN(parseFloat(data.total[i][j]))) {
+                    console.log('cool')
                     // Check if item already exists
                     if (leaderObj[j] && data.total[i][j].length) {
                         leaderObj[j].count++;
@@ -33164,6 +33168,8 @@ $(document).ready(function () {
                 }
             }
         }
+
+        console.log(data.total)
 
         // Find average
         let newTableLeaderboard = [];

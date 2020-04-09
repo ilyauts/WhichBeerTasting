@@ -88,7 +88,7 @@ server.get('/filter', (req, res) => {
       if (validText(rows[rowIndex][2])) {
         beerNames.push(rows[rowIndex][2]);
       }
-      if (validText(rows[rowIndex][2])) {
+      if (validText(rows[rowIndex][3])) {
         locations.push(rows[rowIndex][3]);
       }
     }  

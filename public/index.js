@@ -106,7 +106,7 @@ $(document).ready(function () {
         let leaderObj = {};
         for (let i = 1; i < data.total.length; ++i) {
             for (let j = initialIndex; j < finalIndex; ++j) {
-                if (data.total[i][j] !== '...') {
+                if (!isNaN(parseFloat(data.total[i][j]))) {
                     // Check if item already exists
                     if (leaderObj[j] && data.total[i][j].length) {
                         leaderObj[j].count++;
