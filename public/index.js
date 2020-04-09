@@ -285,7 +285,7 @@ $(document).ready(function () {
             }
 
             let currScore = Number(data.total[i][selectedPerson]);
-            if (!isNaN(currScore)) {
+            if (!isNaN(currScore) && currScore >= 1) {
                 if (typeof personTypeMap[data.total[i][1]] === 'undefined') {
                     personTypeMap[data.total[i][1]] = 0;
                     personTypeMap[data.total[i][1] + '-count'] = 0;
@@ -302,7 +302,6 @@ $(document).ready(function () {
                     beerName: data.total[i][2],
                     beerCompany: data.total[i][0],
                     score: currScore
-
                 });
 
                 // Should we add it to 2019 year's analytics?

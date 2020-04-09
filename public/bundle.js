@@ -33149,11 +33149,7 @@ $(document).ready(function () {
         let leaderObj = {};
         for (let i = 1; i < data.total.length; ++i) {
             for (let j = initialIndex; j < finalIndex; ++j) {
-                if(j == 12) {
-                    console.log(data.total[i][j], parseFloat(data.total[i][j]), data.total[0][j], data.total[i][j] === '...')
-                }
                 if (!isNaN(parseFloat(data.total[i][j]))) {
-                    console.log('cool')
                     // Check if item already exists
                     if (leaderObj[j] && data.total[i][j].length) {
                         leaderObj[j].count++;
@@ -33168,8 +33164,6 @@ $(document).ready(function () {
                 }
             }
         }
-
-        console.log(data.total)
 
         // Find average
         let newTableLeaderboard = [];
@@ -33334,7 +33328,7 @@ $(document).ready(function () {
             }
 
             let currScore = Number(data.total[i][selectedPerson]);
-            if (!isNaN(currScore)) {
+            if (!isNaN(currScore) && currScore >= 1) {
                 if (typeof personTypeMap[data.total[i][1]] === 'undefined') {
                     personTypeMap[data.total[i][1]] = 0;
                     personTypeMap[data.total[i][1] + '-count'] = 0;
@@ -33351,7 +33345,6 @@ $(document).ready(function () {
                     beerName: data.total[i][2],
                     beerCompany: data.total[i][0],
                     score: currScore
-
                 });
 
                 // Should we add it to 2019 year's analytics?
