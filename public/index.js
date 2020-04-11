@@ -2,6 +2,7 @@ const removeDiacritics = require('diacritics').remove;
 const $ = require('jquery');
 const axios = require('axios');
 const Chart = require('chart.js');
+const Js2WordCloud = require('js2wordcloud');
 
 const data = {
     companies: [],
@@ -197,6 +198,75 @@ $(document).ready(function () {
 
         // Show the current active section
         $('.analytics-sub-section[data-label="' + jTarget.attr('data-selection') + '"]').removeClass('hide-me');
+
+        // Initialize the word cloud
+        if(jTarget.attr('data-selection') === 'avg') {
+            $('#style-avg-word-map').html('')
+
+            const cloudData = $('#style-avg-word-map').closest('[data-label="avg"]').data('cloudData');
+            const wc = new Js2WordCloud(document.getElementById('style-avg-word-map'))
+            wc.setOption({
+                // imageShape: '/assets/beer.png',
+                tooltip: {
+                    show: true
+                },
+                fontSizeFactor: 2,
+                maxFontSize: 45,
+                minFontSize: 8,  
+                list: cloudData,
+                color: function(word, weight, fontSize, distance, theta) {
+                    // Randomly return one of these colors
+                    const colorArr = ['#eca21c', '#fff', '#808080', '#b27609'];
+                    return colorArr[Math.floor(Math.random() * colorArr.length)];
+                },                
+                backgroundColor: '#000',
+                gridSize: 20
+            })
+        } else if(jTarget.attr('data-selection') === 'maps') {
+            $('#company-word-cloud').html('')
+            $('#company-word-cloud-frequency').html('')
+
+            const cloudData = $('#company-word-cloud').closest('[data-label="maps"]').data('cloudData');
+            const wc = new Js2WordCloud(document.getElementById('company-word-cloud'))
+            wc.setOption({
+                // imageShape: '/assets/beer.png',
+                tooltip: {
+                    show: true
+                },
+                fontSizeFactor: 2,
+                maxFontSize: 45,
+                minFontSize: 8,  
+                list: cloudData,
+                color: function(word, weight, fontSize, distance, theta) {
+                    // Randomly return one of these colors
+                    const colorArr = ['#eca21c', '#fff', '#808080', '#b27609'];
+                    return colorArr[Math.floor(Math.random() * colorArr.length)];
+                },                
+                backgroundColor: '#000',
+                gridSize: 20
+            });
+
+            const cloudDataFrequency = $('#company-word-cloud-frequency').closest('[data-label="maps"]').data('cloudDataFrequency');
+            const wc2 = new Js2WordCloud(document.getElementById('company-word-cloud-frequency'))
+            wc2.setOption({
+                // imageShape: '/assets/beer.png',
+                tooltip: {
+                    show: true
+                },
+                fontSizeFactor: 2,
+                maxFontSize: 45,
+                minFontSize: 8,  
+                list: cloudDataFrequency,
+                color: function(word, weight, fontSize, distance, theta) {
+                    // Randomly return one of these colors
+                    const colorArr = ['#eca21c', '#fff', '#808080', '#b27609'];
+                    return colorArr[Math.floor(Math.random() * colorArr.length)];
+                },                
+                backgroundColor: '#000',
+                gridSize: 20
+            })
+            
+        }
     });
 
     $('#v-pills-maps-tab').on('click', function(e) {
@@ -274,6 +344,11 @@ $(document).ready(function () {
             allTypes: 0
         };
 
+        // Find counts by brewery
+        let personBreweryMap = {
+            count: 0
+        };
+
         let personAllBeers = [];
         let person2019Beers = [];
         let bucketedRatings = {'1': 0, '1.5': 0, '2': 0, '2.5': 0, '3': 0, '3.5': 0, '4': 0, '4.5': 0, '5': 0, '5.5': 0, '6': 0, '6.5': 0, '7': 0, '7.5': 0, '8': 0, '8.5': 0, '9': 0, '9.5': 0, '10': 0};
@@ -286,15 +361,27 @@ $(document).ready(function () {
 
             let currScore = Number(data.total[i][selectedPerson]);
             if (!isNaN(currScore) && currScore >= 1) {
+                // Have we seen this type before?
                 if (typeof personTypeMap[data.total[i][1]] === 'undefined') {
                     personTypeMap[data.total[i][1]] = 0;
                     personTypeMap[data.total[i][1] + '-count'] = 0;
                 }
 
+                // Have we seen this brewery before?
+                if (typeof personBreweryMap[data.total[i][0]] === 'undefined') {
+                    personBreweryMap[data.total[i][0]] = 0
+                    personBreweryMap[data.total[i][0] + '-count'] = 0
+                }
+
+                // List that we've found the type
                 personTypeMap.count++;
                 personTypeMap.allTypes += currScore;
                 personTypeMap[data.total[i][1]] += currScore;
                 personTypeMap[data.total[i][1] + '-count']++;
+
+                // And the brewery
+                personBreweryMap[data.total[i][0]] += currScore;
+                personBreweryMap[data.total[i][0] + '-count']++;
 
                 // Add to all beers list
                 personAllBeers.push({
@@ -319,6 +406,7 @@ $(document).ready(function () {
                 bucketedRatings[currScore]++;
             }
         }
+        console.log(1111111, personBreweryMap)
 
         // Sort the analytics
         personAllBeers.sort((a, b) => {
@@ -403,8 +491,30 @@ $(document).ready(function () {
             }
         }
 
-        // Sort the toPrint array
+         // Sort the toPrint array
         toPrint.sort((a, b) => {
+            return (a.score > b.score) ? -1 : 1;
+        });
+
+        // And for breweries too
+        let toPrintBrewery = [];
+        for (let p in personBreweryMap) {
+            if (personBreweryMap.hasOwnProperty(p)) {
+                if (p.indexOf('-count') === -1 && p.indexOf('allTypes') === -1 && p.indexOf('count') === -1) {
+                    // Find type averages
+                    personBreweryMap[p] /= personBreweryMap[p + '-count'];
+
+                    toPrintBrewery.push({
+                        name: p,
+                        score: personBreweryMap[p],
+                        count: personBreweryMap[p + '-count']
+                    });
+                }
+            }
+        }
+
+        // Sort the toPrint array
+        toPrintBrewery.sort((a, b) => {
             return (a.score > b.score) ? -1 : 1;
         });
 
@@ -479,6 +589,24 @@ $(document).ready(function () {
 
         // Show the below section
         $('#analytics-post-select').removeClass('hide-me');
+
+        // Let's create an array for the wordcloud map
+        const wordCloudData = toPrint.map((val) => ([ val.name, (val.score) ]));
+        $('#style-avg-word-map').css('height', '75vh');
+        $('#style-avg-word-map').css('width', '60vw');
+        $('#style-avg-word-map').closest('[data-label="avg"]').data('cloudData', wordCloudData);
+
+        // Same thing for breweries now
+        const wordCloudBreweryData = toPrintBrewery.map((val) => ([ val.name, (val.score) ]));
+        $('#company-word-cloud').css('height', '75vh');
+        $('#company-word-cloud').css('width', '60vw');
+        $('#company-word-cloud').closest('[data-label="maps"]').data('cloudData', wordCloudBreweryData);
+
+        // Same thing for breweries now
+        const wordCloudBreweryFrequencyData = toPrintBrewery.map((val) => ([ val.name, (val.count) ]));
+        $('#company-word-cloud-frequency').css('height', '75vh');
+        $('#company-word-cloud-frequency').css('width', '60vw');
+        $('#company-word-cloud-frequency').closest('[data-label="maps"]').data('cloudDataFrequency', wordCloudBreweryFrequencyData);
     }
 
     function cleverRound(num) {

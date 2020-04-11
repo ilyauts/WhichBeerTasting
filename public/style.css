@@ -163,3 +163,8 @@ a.link:hover {
 .map-header:first-of-type {
     margin-top: 0px;
 }
+
+#style-avg-word-map, #company-word-cloud, #company-word-cloud-frequency {
+    border: 3px solid #eca21c;
+    margin-bottom: 40px;
+}

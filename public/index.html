@@ -9,14 +9,12 @@
   <link rel="stylesheet" href="/vendor/bootstrap.min.css">
   <link type="text/css" rel="stylesheet" href="vendor/all.min.css">
   <link type="text/css" rel="stylesheet" href="style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="/vendor/bootstrap.min.js"></script>
+  <script src="/vendor/jquery.min.js"></script>
   <script src="/vendor/all.min.js"></script>
   <script src="/vendor/d3.min.js"></script>
   <script src="/vendor/topojson.min.js"></script>
-  <!-- <script src="/vendor/datamaps.world.min.js"></script> -->
+  <script src="/vendor/bootstrap.min.js"></script>
   <script src="/vendor/datamaps.all.min.js"></script>
-  <!-- <script src="/vendor/datamaps.usa.min.js"></script> -->
   <script src="bundle.js"></script>
 </head>
 
@@ -126,11 +124,21 @@
                 <label class="w-100 map-header">Beers Tasted Worldwide</label>
                 <div id="main-map-personal" style="position: relative; width: 60vw; height: 30vw;"></div>
 
-                <label class="w-100 map-header">Beers Tasted in the US</h2>
+                <label class="w-100 map-header">Beers Tasted in the US</label>
                 <div id="usa-map-personal" style="position: relative; width: 60vw; height: 35vw;"></div>
+
+                <label class="w-100 map-header" style="margin-bottom: 20px;">Favorite Brewery Word Cloud</label>
+                <div id="company-word-cloud" style="position: relative; width: 60vw; height: 35vw;"></div>
+
+                <label class="w-100 map-header" style="margin-bottom: 20px;">Most Tasted Brewery Word Cloud</label>
+                <div id="company-word-cloud-frequency" style="position: relative; width: 60vw; height: 35vw;"></div>
               </div>
             </div>
             <div class="analytics-sub-section hide-me" data-label="avg">
+
+              <h4 class="mt-5">Beer Styles Word Cloud</h4>
+              <div id="style-avg-word-map" class="jqcloud"></div>
+
               <div class="input-group mb-5">
                 <label class="w-100">Filter by beer or company...</label>
                 <input type="text" class="form-control filter-beer" id="avg-query" placeholder="Filter on type">
