@@ -168,3 +168,15 @@ a.link:hover {
     border: 3px solid #eca21c;
     margin-bottom: 40px;
 }
+
+#had-switch {
+    margin-bottom: 50px;
+}
+
+.have-had tr.beer-list-tr:not(.filled-row) {
+    display: none;
+}
+
+.have-not-had tr.beer-list-tr.filled-row {
+    display: none;
+}

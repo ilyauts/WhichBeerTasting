@@ -69,6 +69,16 @@
 
           <div class="row">
             <div class="col">
+
+              <div>
+                <label class="w-100">Filter by beers tasted...</label>
+                <select class="custom-select" id="had-switch">
+                  <option value="all" selected>All beers tasted</option>
+                  <option value="mine">Beers I've tasted</option>
+                  <option value="theirs">Beers I have not tasted</option>
+                </select>
+              </div>
+
               <table class="table my-table" id="beer-table">
                 <thead>
                   <tr class="header-tr">
@@ -114,9 +124,12 @@
             <div class="btn-group btn-group-lg analytics-buttons mt-3 mb-5" role="group" aria-label="Basic example">
               <button type="button" class="btn btn-secondary analytics-button" data-selection="maps">Maps</button>
               <button type="button" class="btn btn-secondary analytics-button" data-selection="avg">Beer Styles</button>
-              <button type="button" class="btn btn-secondary analytics-button" data-selection="top">Top / Bottom 10</button>
-              <button type="button" class="btn btn-secondary analytics-button" data-selection="year">Year In Review</button>
-              <button type="button" class="btn btn-secondary analytics-button" data-selection="dist">Rating Distribution</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="top">Top / Bottom
+                10</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="year">Year In
+                Review</button>
+              <button type="button" class="btn btn-secondary analytics-button" data-selection="dist">Rating
+                Distribution</button>
             </div>
 
             <div class="analytics-sub-section hide-me" data-label="maps">
@@ -224,7 +237,7 @@
 
                 <h2 class="map-header">Beers Tasted in the US</h2>
                 <div id="usa-map" style="position: relative; width: 60vw; height: 35vw;"></div>
-            </div>
+              </div>
             </div>
           </div>
         </div>
@@ -235,7 +248,7 @@
               href="mailto:beertasting@theeqns.com">beertasting@theeqns.com</a></h4>
 
           <h4 class="mt-5 mb-5">Find out more on: <a class="link"
-            href="https://www.facebook.com/groups/1841299209428434">Facebook</a></h4>
+              href="https://www.facebook.com/groups/1841299209428434">Facebook</a></h4>
         </div>
 
       </div>

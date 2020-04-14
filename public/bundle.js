@@ -33127,6 +33127,21 @@ $(document).ready(function () {
             populateForPerson.call(this, $(this).find(':selected').data('index'));
         });
 
+        // Listen to when the filter of tasted beers changes
+        $('#had-switch').change(e => {
+            const val = $('#had-switch option:selected').val();
+            $('#beer-table').removeClass('have-had have-not-had');
+            
+            switch (val) {
+                case 'mine':
+                    console.log(1111, $('#beer-table'))
+                    $('#beer-table').addClass('have-had');
+                    break;
+                case 'theirs':
+                    $('#beer-table').addClass('have-not-had');
+                    break;
+            }
+        });
 
         // Store entirety
         data.total = respData.total;
@@ -33252,7 +33267,7 @@ $(document).ready(function () {
         $('.analytics-sub-section[data-label="' + jTarget.attr('data-selection') + '"]').removeClass('hide-me');
 
         // Initialize the word cloud
-        if(jTarget.attr('data-selection') === 'avg') {
+        if (jTarget.attr('data-selection') === 'avg') {
             $('#style-avg-word-map').html('')
 
             const cloudData = $('#style-avg-word-map').closest('[data-label="avg"]').data('cloudData');
@@ -33264,17 +33279,17 @@ $(document).ready(function () {
                 },
                 fontSizeFactor: 2,
                 maxFontSize: 45,
-                minFontSize: 8,  
+                minFontSize: 8,
                 list: cloudData,
-                color: function(word, weight, fontSize, distance, theta) {
+                color: function (word, weight, fontSize, distance, theta) {
                     // Randomly return one of these colors
                     const colorArr = ['#eca21c', '#fff', '#808080', '#b27609'];
                     return colorArr[Math.floor(Math.random() * colorArr.length)];
-                },                
+                },
                 backgroundColor: '#000',
                 gridSize: 20
             })
-        } else if(jTarget.attr('data-selection') === 'maps') {
+        } else if (jTarget.attr('data-selection') === 'maps') {
             $('#company-word-cloud').html('')
             $('#company-word-cloud-frequency').html('')
 
@@ -33287,13 +33302,13 @@ $(document).ready(function () {
                 },
                 fontSizeFactor: 2,
                 maxFontSize: 45,
-                minFontSize: 8,  
+                minFontSize: 8,
                 list: cloudData,
-                color: function(word, weight, fontSize, distance, theta) {
+                color: function (word, weight, fontSize, distance, theta) {
                     // Randomly return one of these colors
                     const colorArr = ['#eca21c', '#fff', '#808080', '#b27609'];
                     return colorArr[Math.floor(Math.random() * colorArr.length)];
-                },                
+                },
                 backgroundColor: '#000',
                 gridSize: 20
             });
@@ -33307,24 +33322,24 @@ $(document).ready(function () {
                 },
                 fontSizeFactor: 2,
                 maxFontSize: 45,
-                minFontSize: 8,  
+                minFontSize: 8,
                 list: cloudDataFrequency,
-                color: function(word, weight, fontSize, distance, theta) {
+                color: function (word, weight, fontSize, distance, theta) {
                     // Randomly return one of these colors
                     const colorArr = ['#eca21c', '#fff', '#808080', '#b27609'];
                     return colorArr[Math.floor(Math.random() * colorArr.length)];
-                },                
+                },
                 backgroundColor: '#000',
                 gridSize: 20
             })
-            
+
         }
     });
 
-    $('#v-pills-maps-tab').on('click', function(e) {
+    $('#v-pills-maps-tab').on('click', function (e) {
         // Let's render the maps
-        setTimeout(function() {
-            populateMaps(); 
+        setTimeout(function () {
+            populateMaps();
         }, 250);
     });
 
@@ -33362,9 +33377,16 @@ $(document).ready(function () {
 
     function populateForPerson(index) {
         let trs = $("tr:not(.header-tr)").each((_, el) => {
+            // Hide rows
+            $(el).removeClass('filled-row');
+
             let idx = $(el).data('index');
             if (data.total[idx][index] !== '...' && data.total[idx][index] !== undefined) {
                 $(el).find('.your-rating').text(data.total[idx][index] * 10 + '%');
+
+                // Add class
+                $(el).addClass('filled-row');
+
             } else {
                 $(el).find('.your-rating').text('...');
             }
@@ -33403,7 +33425,7 @@ $(document).ready(function () {
 
         let personAllBeers = [];
         let person2019Beers = [];
-        let bucketedRatings = {'1': 0, '1.5': 0, '2': 0, '2.5': 0, '3': 0, '3.5': 0, '4': 0, '4.5': 0, '5': 0, '5.5': 0, '6': 0, '6.5': 0, '7': 0, '7.5': 0, '8': 0, '8.5': 0, '9': 0, '9.5': 0, '10': 0};
+        let bucketedRatings = { '1': 0, '1.5': 0, '2': 0, '2.5': 0, '3': 0, '3.5': 0, '4': 0, '4.5': 0, '5': 0, '5.5': 0, '6': 0, '6.5': 0, '7': 0, '7.5': 0, '8': 0, '8.5': 0, '9': 0, '9.5': 0, '10': 0 };
         // Counting and math
         for (let i = 0; i < data.total.length; ++i) {
             // Have we gone too far?
@@ -33543,7 +33565,7 @@ $(document).ready(function () {
             }
         }
 
-         // Sort the toPrint array
+        // Sort the toPrint array
         toPrint.sort((a, b) => {
             return (a.score > b.score) ? -1 : 1;
         });
@@ -33582,7 +33604,7 @@ $(document).ready(function () {
             })));
         });
 
-        let labels = (Object.keys(bucketedRatings).map(a => Number(a))).sort((a,b) => a - b);
+        let labels = (Object.keys(bucketedRatings).map(a => Number(a))).sort((a, b) => a - b);
 
         let bucketsArr = [];
         labels.forEach(val => {
@@ -33643,19 +33665,19 @@ $(document).ready(function () {
         $('#analytics-post-select').removeClass('hide-me');
 
         // Let's create an array for the wordcloud map
-        const wordCloudData = toPrint.map((val) => ([ val.name, (val.score) ]));
+        const wordCloudData = toPrint.map((val) => ([val.name, (val.score)]));
         $('#style-avg-word-map').css('height', '75vh');
         $('#style-avg-word-map').css('width', '60vw');
         $('#style-avg-word-map').closest('[data-label="avg"]').data('cloudData', wordCloudData);
 
         // Same thing for breweries now
-        const wordCloudBreweryData = toPrintBrewery.map((val) => ([ val.name, (val.score) ]));
+        const wordCloudBreweryData = toPrintBrewery.map((val) => ([val.name, (val.score)]));
         $('#company-word-cloud').css('height', '75vh');
         $('#company-word-cloud').css('width', '60vw');
         $('#company-word-cloud').closest('[data-label="maps"]').data('cloudData', wordCloudBreweryData);
 
         // Same thing for breweries now
-        const wordCloudBreweryFrequencyData = toPrintBrewery.map((val) => ([ val.name, (val.count) ]));
+        const wordCloudBreweryFrequencyData = toPrintBrewery.map((val) => ([val.name, (val.count)]));
         $('#company-word-cloud-frequency').css('height', '75vh');
         $('#company-word-cloud-frequency').css('width', '60vw');
         $('#company-word-cloud-frequency').closest('[data-label="maps"]').data('cloudDataFrequency', wordCloudBreweryFrequencyData);
@@ -33680,10 +33702,10 @@ $(document).ready(function () {
     function populateMaps() {
         let countryBeerData = {};
         let stateBeerData = {};
-        
+
         // Loop through all the countries and color them
-        for(let cc in data.countryCodes) {
-            if(data.countryCodes.hasOwnProperty(cc)) {
+        for (let cc in data.countryCodes) {
+            if (data.countryCodes.hasOwnProperty(cc)) {
                 let curr = data.countryCodes[cc];
                 countryBeerData[cc] = {
                     fillKey: 'beersTasted',
@@ -33698,21 +33720,21 @@ $(document).ready(function () {
         var map = new Datamap({
             element: document.getElementById('main-map'),
             fills: {
-              defaultFill: "#d2b48c",
-              beersTasted: "#eca21c"
+                defaultFill: "#d2b48c",
+                beersTasted: "#eca21c"
             },
             geographyConfig: {
                 highlightBorderColor: '#bada55',
-                popupTemplate: function(geography, data) {
+                popupTemplate: function (geography, data) {
                     return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></br>Avg Rating: ' + Math.round(data.ratings) + '%</br>Count: ' + data.count + '</div>'
-                }                
-              },
+                }
+            },
             data: countryBeerData
-          });
+        });
 
         // Loop through all the states and do the same
-        for(let cc in data.stateCodes) {
-            if(data.stateCodes.hasOwnProperty(cc)) {
+        for (let cc in data.stateCodes) {
+            if (data.stateCodes.hasOwnProperty(cc)) {
                 let curr = data.stateCodes[cc];
                 stateBeerData[cc] = {
                     fillKey: 'beersTasted',
@@ -33721,28 +33743,28 @@ $(document).ready(function () {
                 }
             }
         }
-        
+
         // Fill out the main map
         $('#usa-map').html('');
         var usaMap = new Datamap({
             scope: 'usa',
             element: document.getElementById('usa-map'),
             fills: {
-              defaultFill: "#d2b48c",
-              beersTasted: "#eca21c"
+                defaultFill: "#d2b48c",
+                beersTasted: "#eca21c"
             },
             geographyConfig: {
                 highlightBorderColor: '#bada55',
-                popupTemplate: function(geography, data) {
+                popupTemplate: function (geography, data) {
                     return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></br>Avg Rating: ' + Math.round(data.ratings) + '%</br>Count: ' + data.count + '</div>'
-                }                
-              },
+                }
+            },
             data: stateBeerData
-          });
+        });
     }
 
     // Maps for individuals instead
-    $('body').on('click', '[data-selection="maps"]', function(e) {
+    $('body').on('click', '[data-selection="maps"]', function (e) {
         let countryBeerData = {};
         let stateBeerData = {};
 
@@ -33751,8 +33773,8 @@ $(document).ready(function () {
         // First make a copy of the global count, and instead filter it down to the personal count
         let toDelete = [];
         let personalCountryCodes = JSON.parse(JSON.stringify(data.countryCodes));
-        for(let l in personalCountryCodes) {
-            if(personalCountryCodes.hasOwnProperty(l)) {
+        for (let l in personalCountryCodes) {
+            if (personalCountryCodes.hasOwnProperty(l)) {
                 let curr = personalCountryCodes[l];
 
                 // Clear count and avg ratings
@@ -33760,9 +33782,9 @@ $(document).ready(function () {
                 curr.ratings = 0;
 
                 // Loop through all rows, and remove any that don't belong there
-                for(let r = curr.rows.length - 1; r >= 0; r--) {
+                for (let r = curr.rows.length - 1; r >= 0; r--) {
                     let currR = curr.rows[r];
-                    if(data.total[currR + 1][personColumn] === '...' || data.total[currR + 1][personColumn] === '') {
+                    if (data.total[currR + 1][personColumn] === '...' || data.total[currR + 1][personColumn] === '') {
                         curr.rows.splice(r, 1);
                     } else {
                         curr.count++;
@@ -33771,7 +33793,7 @@ $(document).ready(function () {
                 }
 
                 // If count still zero - delete key
-                 if(curr.count === 0) {
+                if (curr.count === 0) {
                     delete personalCountryCodes[l];
                 } else {
                     curr.ratings = (curr.ratings * 10) / curr.count;
@@ -33780,8 +33802,8 @@ $(document).ready(function () {
         }
 
         // Loop through all the countries and color them
-        for(let cc in personalCountryCodes) {
-            if(personalCountryCodes.hasOwnProperty(cc)) {
+        for (let cc in personalCountryCodes) {
+            if (personalCountryCodes.hasOwnProperty(cc)) {
                 let curr = personalCountryCodes[cc];
                 countryBeerData[cc] = {
                     fillKey: 'beersTasted',
@@ -33795,23 +33817,23 @@ $(document).ready(function () {
         var map = new Datamap({
             element: document.getElementById('main-map-personal'),
             fills: {
-              defaultFill: "#d2b48c",
-              beersTasted: "#eca21c"
+                defaultFill: "#d2b48c",
+                beersTasted: "#eca21c"
             },
             geographyConfig: {
                 highlightBorderColor: '#bada55',
-                popupTemplate: function(geography, data) {
+                popupTemplate: function (geography, data) {
                     return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></br>Avg Rating: ' + Math.round(data.ratings) + '%</br>Count: ' + data.count + '</div>'
-                }                
-              },
+                }
+            },
             data: countryBeerData
-          });
+        });
 
 
         // First make a copy of the global count, and instead filter it down to the personal count
         let personalStateCodes = JSON.parse(JSON.stringify(data.stateCodes));
-        for(let l in personalStateCodes) {
-            if(personalStateCodes.hasOwnProperty(l)) {
+        for (let l in personalStateCodes) {
+            if (personalStateCodes.hasOwnProperty(l)) {
                 let curr = personalStateCodes[l];
 
                 // Clear count and avg ratings
@@ -33819,9 +33841,9 @@ $(document).ready(function () {
                 curr.ratings = 0;
 
                 // Loop through all rows, and remove any that don't belong there
-                for(let r = curr.rows.length - 1; r >= 0; r--) {
+                for (let r = curr.rows.length - 1; r >= 0; r--) {
                     let currR = curr.rows[r];
-                    if(data.total[currR + 1][personColumn] === '...' || data.total[currR + 1][personColumn] === '') {
+                    if (data.total[currR + 1][personColumn] === '...' || data.total[currR + 1][personColumn] === '') {
                         curr.rows.splice(r, 1);
                     } else {
                         curr.count++;
@@ -33830,7 +33852,7 @@ $(document).ready(function () {
                 }
 
                 // If count still zero - delete key
-                if(curr.count === 0) {
+                if (curr.count === 0) {
                     delete personalStateCodes[l];
                 } else {
                     curr.ratings = (curr.ratings * 10) / curr.count;
@@ -33839,8 +33861,8 @@ $(document).ready(function () {
         }
 
         // Loop through all the states and do the same
-        for(let cc in personalStateCodes) {
-            if(personalStateCodes.hasOwnProperty(cc)) {
+        for (let cc in personalStateCodes) {
+            if (personalStateCodes.hasOwnProperty(cc)) {
                 let curr = personalStateCodes[cc];
                 stateBeerData[cc] = {
                     fillKey: 'beersTasted',
@@ -33849,24 +33871,24 @@ $(document).ready(function () {
                 }
             }
         }
-        
+
         // Fill out the main map
         $('#usa-map-personal').html('');
         var usaMap = new Datamap({
             scope: 'usa',
             element: document.getElementById('usa-map-personal'),
             fills: {
-              defaultFill: "#d2b48c",
-              beersTasted: "#eca21c"
+                defaultFill: "#d2b48c",
+                beersTasted: "#eca21c"
             },
             geographyConfig: {
                 highlightBorderColor: '#bada55',
-                popupTemplate: function(geography, data) {
+                popupTemplate: function (geography, data) {
                     return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></br>Avg Rating: ' + Math.round(data.ratings) + '%</br>Count: ' + data.count + '</div>'
-                }                
-              },
+                }
+            },
             data: stateBeerData
-          });
+        });
     });
 });
 },{"axios":1,"chart.js":25,"diacritics":26,"jquery":28,"js2wordcloud":29}],32:[function(require,module,exports){
