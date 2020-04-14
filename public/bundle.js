@@ -33125,13 +33125,19 @@ $(document).ready(function () {
         // Listen to when person is selected
         $('#attendee').change(e => {
             populateForPerson.call(this, $(this).find(':selected').data('index'));
+console.log(9999, $(this).find(':selected').data('index'))
+            if(typeof $(this).find(':selected').data('index') === 'undefined') {
+                $('#had-switch-container').addClass('hide-me');
+            } else {
+                $('#had-switch-container').removeClass('hide-me');
+            }
         });
 
         // Listen to when the filter of tasted beers changes
         $('#had-switch').change(e => {
             const val = $('#had-switch option:selected').val();
             $('#beer-table').removeClass('have-had have-not-had');
-            
+
             switch (val) {
                 case 'mine':
                     console.log(1111, $('#beer-table'))
