@@ -73,7 +73,7 @@ $(document).ready(function () {
         // Listen to when person is selected
         $('#attendee').change(e => {
             populateForPerson.call(this, $(this).find(':selected').data('index'));
-console.log(9999, $(this).find(':selected').data('index'))
+
             if(typeof $(this).find(':selected').data('index') === 'undefined') {
                 $('#had-switch-container').addClass('hide-me');
             } else {
