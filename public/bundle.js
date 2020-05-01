@@ -33436,7 +33436,7 @@ $(document).ready(function () {
                 total = dataTotalCopy.sort((a,b) => {
                     if(Number(a[avgIndex]) > Number(b[avgIndex])) {
                         return 1;
-                    } else if (Number(a[avgIndex]()) < Number(b[avgIndex])) {
+                    } else if (Number(a[avgIndex]) < Number(b[avgIndex])) {
                         return -1;
                     } else {
                         return 0;

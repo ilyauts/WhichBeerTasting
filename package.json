@@ -1,7 +1,7 @@
 {
-  "name": "whichbeertasting",
-  "version": "1.0.1",
-  "description": "Which beer have we tasted?",
+  "name": "beertasting2020",
+  "version": "1.0.0",
+  "description": "Beer Tasting WebApp",
   "private": true,
   "engines": {
     "node": "^6.9.0"
@@ -22,10 +22,9 @@
     "google-auth-library": "^1.6.1",
     "googleapis": "^29.0.0",
     "i18n-iso-countries": "^5.1.0",
-    "jquery": "^3.4.0",
+    "jquery": "^3.5.1",
     "js2wordcloud": "^1.1.12"
   },
-  "license": "MIT",
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.12.0"
   }
