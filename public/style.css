@@ -180,3 +180,19 @@ a.link:hover {
 .have-not-had tr.beer-list-tr.filled-row {
     display: none;
 }
+
+.icon-table-sort {
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.icon-table-sort:hover {
+    font-size: 14px;
+    margin-left: 10px;
+    color: #eca21c;
+    cursor: pointer;
+}
+
+#beer-table td {
+    min-width: 7.8vw;
+}

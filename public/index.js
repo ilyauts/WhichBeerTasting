@@ -15,6 +15,9 @@ const data = {
     myChart: {}
 };
 
+// Start by determining the number of attendees
+let initialIndex, finalIndex, companyIndex, beerIndex, beerTypeIndex, avgIndex, myIndex, finalRow;
+
 // Store in the window for later
 window.data = data;
 
@@ -31,9 +34,6 @@ $(document).ready(function () {
 
         let respData = response.data;
 
-        // Start by determining the number of attendees
-        let initialIndex, finalIndex, companyIndex, beerIndex, avgIndex, finalRow;
-
         // Get rid of all the blank entries
         respData.total = respData.total.filter(currRow => (currRow[0] !== undefined && currRow[0] !== 'Count' && currRow[0] !== 'AVG' && currRow[0] !== 'STDEV'));
 
@@ -42,6 +42,8 @@ $(document).ready(function () {
                 companyIndex = parseInt(dIndex);
             } else if (respData.total[0][dIndex] === 'Beer Name') {
                 beerIndex = parseInt(dIndex);
+            } else if (respData.total[0][dIndex] === 'Beer Type') {
+                beerTypeIndex = parseInt(dIndex);
             } else if (respData.total[0][dIndex] === 'Location') {
                 initialIndex = parseInt(dIndex) + 1;
             } else if (respData.total[0][dIndex] === 'Avg. Rating') {
@@ -72,9 +74,11 @@ $(document).ready(function () {
 
         // Listen to when person is selected
         $('#attendee').change(e => {
-            populateForPerson.call(this, $(this).find(':selected').data('index'));
 
-            if(typeof $(this).find(':selected').data('index') === 'undefined') {
+            myIndex = $(this).find(':selected').data('index');
+            populateForPerson.call(this, myIndex);
+
+            if(typeof myIndex === 'undefined') {
                 $('#had-switch-container').addClass('hide-me');
             } else {
                 $('#had-switch-container').removeClass('hide-me');
@@ -88,7 +92,6 @@ $(document).ready(function () {
 
             switch (val) {
                 case 'mine':
-                    console.log(1111, $('#beer-table'))
                     $('#beer-table').addClass('have-had');
                     break;
                 case 'theirs':
@@ -101,28 +104,7 @@ $(document).ready(function () {
         data.total = respData.total;
 
         // Generate beer table
-        let newTable = [];
-        for (let i = 1; i < data.total.length; ++i) {
-            newTable.push($('<tr>', {
-                'class': 'beer-list-tr',
-                'data-beer': removeDiacritics(data.total[i][beerIndex]).toLowerCase(),
-                'data-company': removeDiacritics(data.total[i][companyIndex]).toLowerCase(),
-                'data-index': i
-            }).append($('<td>', {
-                class: 'company',
-                text: data.total[i][companyIndex]
-            })).append($('<td>', {
-                class: 'beer',
-                text: data.total[i][beerIndex]
-            })).append($('<td>', {
-                class: 'avg-rating',
-                text: data.total[i][avgIndex]
-            })).append($('<td>', {
-                class: 'your-rating',
-                text: '...'
-            })));
-        }
-        $('#beer-table tbody').append(newTable);
+        renderBeerTable(data.total);
 
         // Generate leaderboard table
         let leaderObj = {};
@@ -316,6 +298,172 @@ $(document).ready(function () {
             });
         }
     });
+
+    // Sort before you re-render
+    $('body').on('click', '.icon-table-sort', (e) => {
+        e.stopPropagation();
+        
+        let jTarget = $(e.target);
+
+        // Make sure we're on the right level
+        if(!jTarget.hasClass('icon-table-sort')) {
+            jTarget = jTarget.closest('.icon-table-sort');
+        }
+
+        const sortTerm = jTarget.closest('th').data('sort');
+        
+        // If currently pointing down or not sorted, then point down
+        const ascending = !jTarget.hasClass('ascending');
+        
+        // Reset all sorts
+        jTarget.closest('table').find('.icon-table-sort').html($('<i>', {
+            'class': 'fas fa-sort'
+        })).removeClass('ascending');
+
+        // Should we remove the class?
+        jTarget = $('[data-sort="' + sortTerm + '"] .icon-table-sort');
+        if(ascending) {
+            jTarget.html($('<i>', {
+                'class': 'fas fa-sort-up'
+            }));
+            jTarget.addClass('ascending');
+        } else {
+            jTarget.html($('<i>', {
+                'class': 'fas fa-sort-down'
+            }));
+            jTarget.removeClass('ascending');
+        }
+        
+        sortAndRenderBeerTable(sortTerm, ascending);
+    });
+    function sortAndRenderBeerTable(sortTerm, ascending) {
+        // Ascending order when @ascending is true
+        
+        // Copy of the total array
+        let dataTotalCopy = JSON.parse(JSON.stringify(data.total)); 
+
+        // Strip the first row
+        let firstRow = dataTotalCopy.splice(0,1);
+
+        let total = [];
+        switch(sortTerm) {
+            case 'Company':
+                total = dataTotalCopy.sort((a,b) => {
+                    if(a[companyIndex].toLowerCase() > b[companyIndex].toLowerCase()) {
+                        return 1;
+                    } else if (a[companyIndex].toLowerCase() < b[companyIndex].toLowerCase()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+            case 'Beer':
+                total = dataTotalCopy.sort((a,b) => {
+                    if(a[beerIndex].toLowerCase() > b[beerIndex].toLowerCase()) {
+                        return 1;
+                    } else if (a[beerIndex].toLowerCase() < b[beerIndex].toLowerCase()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+            case 'Type':
+                total = dataTotalCopy.sort((a,b) => {
+                    if(a[beerTypeIndex].toLowerCase() > b[beerTypeIndex].toLowerCase()) {
+                        return 1;
+                    } else if (a[beerTypeIndex].toLowerCase() < b[beerTypeIndex].toLowerCase()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+            case 'Avg':
+                total = dataTotalCopy.sort((a,b) => {
+                    if(Number(a[avgIndex]) > Number(b[avgIndex])) {
+                        return 1;
+                    } else if (Number(a[avgIndex]()) < Number(b[avgIndex])) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+            case 'MyRating':
+                // Don't sort if you can't
+                if(typeof myIndex === 'undefined') {
+                    return;
+                }
+                total = dataTotalCopy.sort((a,b) => {
+                    // Edge case of empty values
+                    if(a[myIndex] === '...') {
+                        return (ascending) ? 1 : -1;
+                    }
+                    if(b[myIndex] === '...') {
+                        return (ascending) ? -1 : 1;
+
+                    }
+
+                    if(Number(a[myIndex]) > Number(b[myIndex])) {
+                        return 1;
+                    } else if (Number(a[myIndex]) < Number(b[myIndex])) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+
+        // Reverse if descending order
+        if(!ascending && total.length) {
+            total.reverse();
+        }
+
+        // Add the first row back in
+        total = [firstRow, ...total];
+
+        // Finally render the new list
+        renderBeerTable(total);
+    }
+
+    // Let's render the beer table
+    function renderBeerTable(total) {
+        let newTable = [];
+        for (let i = 1; i < total.length; ++i) {
+            const currBeerTasted = (typeof myIndex !== 'undefined' && total[i][myIndex] !== '...');
+
+            newTable.push($('<tr>', {
+                'class': 'beer-list-tr' + (currBeerTasted ? ' filled-row' : ''),
+                'data-beer': removeDiacritics(total[i][beerIndex]).toLowerCase(),
+                'data-company': removeDiacritics(total[i][companyIndex]).toLowerCase(),
+                'data-index': i
+            }).append($('<td>', {
+                class: 'company',
+                text: total[i][companyIndex]
+            })).append($('<td>', {
+                class: 'beer',
+                text: total[i][beerIndex]
+            })).append($('<td>', {
+                class: 'beer-type',
+                text: total[i][beerTypeIndex]
+            })).append($('<td>', {
+                class: 'avg-rating',
+                text: total[i][avgIndex]
+            })).append($('<td>', {
+                class: 'your-rating',
+                text: currBeerTasted ? total[i][myIndex] * 10 + '%' : '...'
+            })));
+        }
+        // Clean old instances of tbody
+        $('#beer-table tbody').html('');
+        $('#beer-table tbody').append(newTable);
+
+    }
 
     function frontEndFilter(filter) {
         // Hide based on company and beer
