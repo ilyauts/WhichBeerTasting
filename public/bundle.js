@@ -33530,11 +33530,13 @@ $(document).ready(function () {
     }
 
     function populateForPerson(index) {
-        let trs = $("tr:not(.header-tr)").each((_, el) => {
+        let trs = $("#beer-table tr:not(.header-tr)").each((_, el) => {
             // Hide rows
             $(el).removeClass('filled-row');
 
             let idx = $(el).data('index');
+
+            // If we got to the point where there's no beer rating anymore, get out of here
             if (data.total[idx][index] !== '...' && data.total[idx][index] !== undefined) {
                 $(el).find('.your-rating').text(data.total[idx][index] * 10 + '%');
 
@@ -33634,7 +33636,6 @@ $(document).ready(function () {
                 bucketedRatings[currScore]++;
             }
         }
-        console.log(1111111, personBreweryMap)
 
         // Sort the analytics
         personAllBeers.sort((a, b) => {
